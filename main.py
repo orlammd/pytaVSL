@@ -67,6 +67,7 @@ class Container:
 
         self.focus = 0
         self.slides[self.focus].visible = True
+        self.slides[self.focus].set_alpha(1.0)
 
     def draw(self):
         for i in range(nSli):
