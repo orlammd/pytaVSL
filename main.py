@@ -19,7 +19,7 @@ LOGGER = pi3d.Log.logger(__name__)
 LOGGER.info("Log using this expression.")
 
 # Setup display and initialiser pi3d
-DISPLAY = pi3d.Display.create(h=640, w=480, background=(0.0, 0.0, 0.0, 1.0), frames_per_second=18)
+DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=18)
 shader = pi3d.Shader("uv_flat")
 CAMERA = pi3d.Camera(is_3d=False)
 drawFlag = False
@@ -63,16 +63,16 @@ class Slide(pi3d.Sprite):
 class Container:
     def __init__(self):
         self.slides = [None]*nSli
+        half = 0
         for i in range(nSli):
             self.slides[i] = Slide()
-        for i in range(nSli):
-            item= [iFiles[i], self.slides[i]]
+            self.slides[i].positionZ(0.1*i + 0.1)
+            item = [iFiles[i%nFi], self.slides[i]]
             fileQ.put(item)
-            print(item)
 
-        self.focus = 0
+        self.focus = 7
+        self.focus_fi = 7
         self.slides[self.focus].visible = True
-        self.slides[self.focus].set_alpha(1.0)
 
     def draw(self):
         for i in range(nSli):
@@ -114,6 +114,7 @@ CAMERA.was_moved = False # to save a tiny bit of work each loop
 
 
 while DISPLAY.loop_running():
+    ctnr.update()
     ctnr.draw()
 
     k = mykeys.read()
