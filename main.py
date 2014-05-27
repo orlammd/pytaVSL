@@ -14,7 +14,7 @@ import liblo
 from six.moves import queue
 
 # Setup display and initialiser pi3d
-DISPLAY = pi3d.Display.create(height=640, w=480, background=(0.0, 0.0, 0.0, 1.0), frames_per_second=18)
+DISPLAY = pi3d.Display.create(h=640.0, w=480.0, background=(0.0, 0.0, 0.0, 1.0), frames_per_second=18)
 shader = pi3d.Shader("uv_flat")
 CAMERA = pi3d.Camera(is_3d=False)
 drawFlag = False
