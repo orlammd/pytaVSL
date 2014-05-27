@@ -68,13 +68,10 @@ class Container:
         self.slides[self.focus].visible = True
 
     def draw(self):
-        # slides have to be drawn back to front for transparency to work.
-        # the 'focused' slide by definition at z=0.1, with deeper z
-        # trailing to the left.  So start by drawing the one to the right
-        # of 'focused', if it is set to visible.  It will be in the back.
         for i in range(nSli):
-            if self.slides[i].visible == True:
-                self.slides[i].draw()
+            ix = (self.focus+i+1)%nSli
+            if self.slides[ix].visible == True:
+                self.slides[ix].draw()
                     
 
 ctnr = Container()
