@@ -17,6 +17,8 @@ from six.moves import queue
 DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=18)
 shader = pi3d.Shader("uv_flat")
 CAMERA = pi3d.Camera(is_3d=False)
+drawFlag = False
+
 
 # Loading files in the queue
 iFiles = glob.glob("pix/*.*")
@@ -39,11 +41,11 @@ def tex_load():
         yrat = DISPLAY.height/tex.iy
         if yrat < xrat:
             xrat = yrat
-            wi, hi = tex.ix * xrat, tex.iy * xrat
-            slide.set_draw_details(shader,[tex])
-            slide.scale(wi, hi, 1.0)
-            slide.set_alpha(0)
-            fileQ.task_done()
+        wi, hi = tex.ix * xrat, tex.iy * xrat
+        slide.set_draw_details(shader,[tex])
+        slide.scale(wi, hi, 1.0)
+        slide.set_alpha(0)
+        fileQ.task_done()
 
 
 class Slide(pi3d.Sprite):
@@ -57,11 +59,12 @@ class Container:
         self.slides = [None]*nSli
         for i in range(nSli):
             self.slides[i] = Slide()
-            item= [iFiles[i%nFi], self.slides[i]]
+        for i in range(nSli):
+            item= [iFiles[i], self.slides[i]]
             fileQ.put(item)
+            print(item)
 
         self.focus = 0
-        self.focus_fi = 0
         self.slides[self.focus].visible = True
 
     def draw(self):
@@ -70,7 +73,6 @@ class Container:
         # trailing to the left.  So start by drawing the one to the right
         # of 'focused', if it is set to visible.  It will be in the back.
         for i in range(nSli):
-            self.slides[4].visible = True
             if self.slides[i].visible == True:
                 self.slides[i].draw()
                     
