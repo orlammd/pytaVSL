@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 """This is the main file of pytaVSL, and aims to provide a VJing and lights-projector-virtualisation tool.
 
 Images are loaded as textures, which then are mapped onto slides (canvases - 8 of them).
@@ -52,7 +54,6 @@ class Slide(pi3d.Sprite):
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
-        self.active = False
 
 class Container:
     def __init__(self):
