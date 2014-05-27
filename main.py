@@ -15,6 +15,9 @@ import liblo
 
 from six.moves import queue
 
+LOGGER = pi3d.Log.logger(__name__)
+LOGGER.info("Log using this expression.")
+
 # Setup display and initialiser pi3d
 DISPLAY = pi3d.Display.create(h=640, w=480, background=(0.0, 0.0, 0.0, 1.0), frames_per_second=18)
 shader = pi3d.Shader("uv_flat")
@@ -54,6 +57,8 @@ class Slide(pi3d.Sprite):
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
+        self.active = False
+        self.fadeup = False
 
 class Container:
     def __init__(self):
@@ -74,6 +79,25 @@ class Container:
             ix = (self.focus+i+1)%nSli
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
+
+    def update(self):
+        # for each slide check the fade direction, bump the alpha and clip
+        for i in range(nSli):
+            a = self.slides[i].alpha()
+            if self.slides[i].fadeup == True and a < 1:
+                a += alpha_step
+                self.slides[i].set_alpha(a)
+                self.slides[i].visible = True
+                self.slides[i].active = True
+            elif self.slides[i].fadeup == False and a > 0:
+                a -= alpha_step
+                self.slides[i].set_alpha(a)
+                self.slides[i].visible = True
+                self.slides[i].active = True
+            else:
+                if a <= 0:
+                    self.slides[i].visible = False
+                self.slides[i].active = False
                     
 
 ctnr = Container()
