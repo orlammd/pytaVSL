@@ -3,6 +3,8 @@
 """This is the main file of pytaVSL, and aims to provide a VJing and lights-projector-virtualisation tool.
 
 Images are loaded as textures, which then are mapped onto slides (canvases - 8 of them).
+
+This file was deeply instpired by Slideshow.py demo file of pi3d.
 """
 
 import time, glob, threading
@@ -14,7 +16,7 @@ from six.moves import queue
 # Setup display and initialiser pi3d
 DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=18)
 shader = pi3d.Shader("uv_flat")
-CAMERA = pi3d.Camera(is_3d=false)
+CAMERA = pi3d.Camera(is_3d=False)
 
 # Loading files in the queue
 iFiles = glob.glob("pix/*.*")
@@ -23,3 +25,79 @@ fileQ = queue.Queue()
 
 # Slides
 nSli = 8
+
+def tex_load():
+    """ Threaded function. mimap = False will make it faster.
+    """
+    while True:
+        item = fileQ.get()
+        # reminder, item is [filename, target Slide]
+        fname = item[0]
+        slide = item[1]
+        tex = pi3d.Texture(item[0], blend=True, mipmap=True)
+        xrat = DISPLAY.width/tex.ix
+        yrat = DISPLAY.height/tex.iy
+        if yrat < xrat:
+            xrat = yrat
+            wi, hi = tex.ix * xrat, tex.iy * xrat
+            slide.set_draw_details(shader,[tex])
+            slide.scale(wi, hi, 1.0)
+            slide.set_alpha(0)
+            fileQ.task_done()
+
+
+class Slide(pi3d.Sprite):
+    def __init__(self):
+        super(Slide, self).__init__(w=1.0, h=1.0)
+        self.visible = False
+        self.active = False
+
+class Container:
+    def __init__(self):
+        self.slides = [None]*nSli
+        for i in range(nSli):
+            self.slides[i] = Slide()
+            item= [iFiles[i%nFi], self.slides[i]]
+            fileQ.put(item)
+
+        self.focus = 0
+        self.focus_fi = 0
+        self.slides[self.focus].visible = True
+
+    def draw(self):
+        # slides have to be drawn back to front for transparency to work.
+        # the 'focused' slide by definition at z=0.1, with deeper z
+        # trailing to the left.  So start by drawing the one to the right
+        # of 'focused', if it is set to visible.  It will be in the back.
+        for i in range(nSli):
+            self.slides[4].visible = True
+            if self.slides[i].visible == True:
+                self.slides[i].draw()
+                    
+
+ctnr = Container()
+
+t = threading.Thread(target=tex_load)
+t.daemon = True
+t.start()
+
+fileQ.join()
+
+mykeys = pi3d.Keyboard()
+CAMERA = pi3d.Camera.instance()
+CAMERA.was_moved = False # to save a tiny bit of work each loop
+
+
+while DISPLAY.loop_running():
+    ctnr.draw()
+
+    k = mykeys.read()
+
+    if k> -1:
+        first = False
+        if k == 27: #ESC
+            mykeys.close()
+            DISPLAY.stop()
+            break
+
+DISPLAY.destroy()
