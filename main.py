@@ -120,7 +120,7 @@ class Container:
     def posit(self):
         print("position changed")
         print(self.slides[self.focus].x())
-        self.slides[self.focus].translate(random.random()*10-5, random.random()*10-5, random.random()-0.5)
+        self.slides[self.focus].translate(random.random()*10-5, random.random()*10-5, 0.0)
         print(self.slides[self.focus].x())        
 
                     
