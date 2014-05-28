@@ -69,15 +69,25 @@ class Slide(pi3d.Sprite):
         self.sy = 1.0
         self.sz = 1.0
 
+        # Angle
+        self.ax = 0.0
+        self.ay = 0.0
+        self.az = 0.0
+
     def set_scale(self, sx, sy, sz):
         self.sx = sx
         self.sy = sy
         self.sz = sz
         self.scale(sx, sy, sz)
 
-
-
-
+    def set_angle(self, ax, ay, az):
+        # set angle (absolute)
+        self.ax = ax
+        self.ay = ay
+        self.az = az
+        self.rotateToX(ax)
+        self.rotateToY(ay)
+        self.rotateToZ(az)
 
 
 class Container:
@@ -147,7 +157,10 @@ class Container:
     def join(self):
 #        self.slides[self.focus-1].visible = True
 #        self.slides[self.focus-1].translate(-30.0, -30.0, 0.0)
-        self.slides[self.focus].set_scale(self.slides[self.focus].sx/2.0, self.slides[self.focus].sy/2.0, self.slides[self.focus].sz)
+#        self.slides[self.focus].set_scale(self.slides[self.focus].sx/2.0, self.slides[self.focus].sy/2.0, self.slides[self.focus].sz)
+#        self.slides[self.focus].set_angle(self.slides[self.focus].ax/2.0, self.slides[self.focus].ay/2.0, self.slides[self.focus].az)
+        self.slides[self.focus].set_angle(0.0, 0.0, random.random()*360)
+        print(self.slides[self.focus].az)
 #        self.slides[self.focus].position(self.slides[self.focus].x(), self.slides[self.focus+1].y(), self.slides[self.focus].z())
 
                     
