@@ -49,8 +49,10 @@ def tex_load():
         if yrat < xrat:
             xrat = yrat
         wi, hi = tex.ix * xrat, tex.iy * xrat
+
         slide.set_draw_details(shader,[tex])
-        slide.scale(wi, hi, 1.0)
+#        slide.scale(wi, hi, 1.0)
+        slide.set_scale(wi, hi, 1.0) 
         slide.set_alpha(0)
         fileQ.task_done()
 
@@ -61,6 +63,31 @@ class Slide(pi3d.Sprite):
         self.visible = False
         self.active = False
         self.fadeup = False
+
+        # Scales
+        self.sx = 1.0
+        self.sy = 1.0
+        self.sz = 1.0
+
+    def sx(self):
+        return self.sx
+
+    def sy(self):
+        return self.sy
+
+    def sz(self):
+        return self.sz
+
+    def set_scale(self, sx, sy, sz):
+        self.sx = sx
+        self.sy = sy
+        self.sz = sz
+        self.scale(sx, sy, sz)
+
+
+
+
+
 
 class Container:
     def __init__(self):
@@ -113,7 +140,7 @@ class Container:
             ix = (self.focus+i+1)%nSli
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
-                self.slides[ix].set_alpha(0.5)
+                self.slides[ix].set_alpha(1.0)
             else:
                 self.slides[ix].set_alpha(0.0)
             
@@ -127,8 +154,9 @@ class Container:
 
 
     def join(self):
-        self.slides[self.focus-1].visible = True
-        self.slides[self.focus-1].translate(-30.0, -30.0, 0.0)
+#        self.slides[self.focus-1].visible = True
+#        self.slides[self.focus-1].translate(-30.0, -30.0, 0.0)
+        self.slides[self.focus].scale(1.0, 1.0, 1.0)
 #        self.slides[self.focus].position(self.slides[self.focus].x(), self.slides[self.focus+1].y(), self.slides[self.focus].z())
 
                     
