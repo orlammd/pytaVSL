@@ -118,7 +118,11 @@ class Container:
                 self.slides[ix].set_alpha(0.0)
             
     def posit(self):
-        self.slides[self.focus].translate(random.random()-0.5, random.random()-0.5, 0.0)
+        print("position changed")
+        print(self.slides[self.focus].x())
+        self.slides[self.focus].translate(random.random()*10-0.5, random.random()*10-0.5, 0.0)
+        print(self.slides[self.focus].x())        
+
                     
 
 ctnr = Container()
