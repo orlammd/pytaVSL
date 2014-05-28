@@ -155,12 +155,20 @@ class Container:
 
 
     def join(self):
+        print(iFiles)
+        iFiles.extend(glob.glob("/home/orl/barons.png"))
+        nFi = len(iFiles)
+        print("And now")
+        print(iFiles)
 #        self.slides[self.focus-1].visible = True
-#        self.slides[self.focus-1].translate(-30.0, -30.0, 0.0)
+#        print(self.slides[self.focus].y())
+#        self.slides[self.focus].translate(0.0, -self.slides[self.focus].sy/2.0, 0.0)
+#        print(self.slides[self.focus].sy)
+#        print(self.slides[self.focus].y())
 #        self.slides[self.focus].set_scale(self.slides[self.focus].sx/2.0, self.slides[self.focus].sy/2.0, self.slides[self.focus].sz)
 #        self.slides[self.focus].set_angle(self.slides[self.focus].ax/2.0, self.slides[self.focus].ay/2.0, self.slides[self.focus].az)
-        self.slides[self.focus].set_angle(0.0, 0.0, random.random()*360)
-        print(self.slides[self.focus].az)
+#        self.slides[self.focus].set_angle(0.0, 0.0, random.random()*360)
+#        print(self.slides[self.focus].az)
 #        self.slides[self.focus].position(self.slides[self.focus].x(), self.slides[self.focus+1].y(), self.slides[self.focus].z())
 
                     
