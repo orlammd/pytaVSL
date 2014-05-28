@@ -32,6 +32,7 @@ fileQ = queue.Queue()
 
 # Slides
 nSli = 8
+alpha_step=0.025
 
 def tex_load():
     """ Threaded function. mimap = False will make it faster.
@@ -66,24 +67,27 @@ class Container:
         half = 0
         for i in range(nSli):
             self.slides[i] = Slide()
-            self.slides[i].positionZ(0.1*i + 0.1)
-            item = [iFiles[i%nFi], self.slides[i]]
+        for i in range(nSli):
+            # never mind this, hop is just to fill in the first series of images from
+            # inside-out: 4 3 5 2 6 1 7 0.
+            half += (i%2)
+            step = (1,-1)[i%2]
+            hop = 4 + step*half
+
+            self.slides[hop].positionZ(0.8-(hop/10))
+            item = [iFiles[hop%nFi], self.slides[hop]]
             fileQ.put(item)
 
-        self.focus = 7
-        self.focus_fi = 7
+        self.focus = 3 # holds the index of the focused image
+        self.focus_fi = 0 # the file index of the focused image
         self.slides[self.focus].visible = True
-
-    def draw(self):
-        for i in range(nSli):
-            ix = (self.focus+i+1)%nSli
-            if self.slides[ix].visible == True:
-                self.slides[ix].draw()
+        self.slides[self.focus].fadeup = True
 
     def update(self):
         # for each slide check the fade direction, bump the alpha and clip
         for i in range(nSli):
             a = self.slides[i].alpha()
+            print("nSlide: " + str(i) + " / alpha:" + str(a))
             if self.slides[i].fadeup == True and a < 1:
                 a += alpha_step
                 self.slides[i].set_alpha(a)
@@ -98,6 +102,21 @@ class Container:
                 if a <= 0:
                     self.slides[i].visible = False
                 self.slides[i].active = False
+
+    def draw(self):
+        # slides have to be drawn back to front for transparency to work.
+        # the 'focused' slide by definition at z=0.1, with deeper z
+        # trailing to the left.  So start by drawing the one to the right
+        # of 'focused', if it is set to visible.  It will be in the back.
+        for i in range(nSli):
+            ix = (self.focus+i+1)%nSli
+            if self.slides[ix].visible == True:
+                self.slides[ix].draw()
+                self.slides[ix].set_alpha(1.0)
+            else:
+                self.slides[ix].set_alpha(0.0)
+            
+
                     
 
 ctnr = Container()
@@ -114,7 +133,7 @@ CAMERA.was_moved = False # to save a tiny bit of work each loop
 
 
 while DISPLAY.loop_running():
-    ctnr.update()
+#    ctnr.update()
     ctnr.draw()
 
     k = mykeys.read()
