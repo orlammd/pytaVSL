@@ -69,15 +69,6 @@ class Slide(pi3d.Sprite):
         self.sy = 1.0
         self.sz = 1.0
 
-    def sx(self):
-        return self.sx
-
-    def sy(self):
-        return self.sy
-
-    def sz(self):
-        return self.sz
-
     def set_scale(self, sx, sy, sz):
         self.sx = sx
         self.sy = sy
@@ -156,7 +147,7 @@ class Container:
     def join(self):
 #        self.slides[self.focus-1].visible = True
 #        self.slides[self.focus-1].translate(-30.0, -30.0, 0.0)
-        self.slides[self.focus].scale(1.0, 1.0, 1.0)
+        self.slides[self.focus].set_scale(self.slides[self.focus].sx/2.0, self.slides[self.focus].sy/2.0, self.slides[self.focus].sz)
 #        self.slides[self.focus].position(self.slides[self.focus].x(), self.slides[self.focus+1].y(), self.slides[self.focus].z())
 
                     
