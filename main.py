@@ -12,6 +12,7 @@ This file was deeply instpired by Slideshow.py demo file of pi3d.
 import time, glob, threading
 import pi3d
 import liblo
+import random
 
 from six.moves import queue
 
@@ -116,7 +117,8 @@ class Container:
             else:
                 self.slides[ix].set_alpha(0.0)
             
-
+    def posit(self):
+        self.slides[self.focus].translate(random.random()-0.5, random.random()-0.5, 0.0)
                     
 
 ctnr = Container()
@@ -144,5 +146,7 @@ while DISPLAY.loop_running():
             mykeys.close()
             DISPLAY.stop()
             break
+        if k == 115: #S
+            ctnr.posit()
 
 DISPLAY.destroy()
