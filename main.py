@@ -118,11 +118,17 @@ class Container:
                 self.slides[ix].set_alpha(0.0)
             
     def posit(self):
-        print("position changed")
-        print(self.slides[self.focus].x())
-        self.slides[self.focus].translate(random.random()*10-5, random.random()*10-5, 0.0)
-        print(self.slides[self.focus].x())        
+        self.slides[self.focus].translate(random.random()*20-5, random.random()*20-5, 0.0)
 
+    def other(self):
+        self.slides[self.focus].visible = False
+        self.focus = (self.focus+int(10*random.random()))%nSli
+        self.slides[self.focus].visible = True
+
+
+    def join(self):
+        self.slides[self.focus+1].visible = True
+        self.sildes[self.focus+1].translate(-30.0, -30.0, 0.0)
                     
 
 ctnr = Container()
@@ -152,5 +158,7 @@ while DISPLAY.loop_running():
             break
         if k == 115: #S
             ctnr.posit()
+        else:
+            ctnr.join()
 
 DISPLAY.destroy()
