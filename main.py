@@ -113,7 +113,7 @@ class Container:
             ix = (self.focus+i+1)%nSli
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
-                self.slides[ix].set_alpha(0.8)
+                self.slides[ix].set_alpha(0.5)
             else:
                 self.slides[ix].set_alpha(0.0)
             
@@ -127,8 +127,9 @@ class Container:
 
 
     def join(self):
-        self.slides[self.focus+1].visible = True
-        self.slides[self.focus+1].translate(-30.0, -30.0, 0.0)
+        self.slides[self.focus-1].visible = True
+        self.slides[self.focus-1].translate(-30.0, -30.0, 0.0)
+#        self.slides[self.focus].position(self.slides[self.focus].x(), self.slides[self.focus+1].y(), self.slides[self.focus].z())
 
                     
 
