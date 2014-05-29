@@ -19,28 +19,6 @@ from six.moves import queue
 LOGGER = pi3d.Log.logger(__name__)
 LOGGER.info("Log using this expression.")
 
-# OSC Server
-class OSCserver(object):
-    def __init__(self, port=56418):
-        self.port = port
-
-    def on_start(self):
-        if self.port is not None:
-            print("Listening on: " + str(self.port))
-            self.server = _liblo.ServerThread(self.port)
-            self.server.register_methods(self)
-            self.server.start()
-
-    def on_exit(self):
-        if self.port is not None:
-            self.server.stop()
-            del self.server
-
-    # OSC Methods
-    @_liblo.make_method('/alpha', 'f')
-    def button_cb(self, path, args):
-        self.sprite.set_alpha(args[0])
-
 
 # Setup display and initialiser pi3d
 DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
@@ -193,6 +171,65 @@ class Container:
 #        self.slides[self.focus].set_angle(0.0, 0.0, random.random()*360)
 #        print(self.slides[self.focus].az)
 #        self.slides[self.focus].position(self.slides[self.focus].x(), self.slides[self.focus+1].y(), self.slides[self.focus].z())
+
+
+class pytaVSL(object):
+    def __init__(self, port=56418):
+        self.port = port
+        self.DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
+        self.shader = pi3d.Shader("uv_flat")
+        self.CAMERA = pi3d.Camera(is_3d=False)
+
+        # Loading files in the queue
+        self.iFiles = glob.glob("pix/*.*")
+        self.nFi = len(iFiles)
+        self.fileQ = queue.Queue()
+
+        # Containers
+        self.ctnr = Container()
+
+        # Slides per container
+        self.nSli = 8
+        self.alpha_step=0.025
+
+    def on_start(self):
+        if self.port is not None:
+            self.server = _liblo.ServerThread(self.port)
+            self.server.register_methods(self)
+            self.server.start()
+            print("Listening on OSC port: " + str(self.port))
+
+    def on_exit(self):
+        if self.port is not None:
+            self.server.stop()
+            del self.server
+
+    def tex_load(self):
+        """ Threaded function. mimap = False will make it faster.
+        """
+        while True:
+            item = self.fileQ.get()
+            # reminder, item is [filename, target Slide]
+            fname = item[0]
+            slide = item[1]
+            tex = pi3d.Texture(item[0], blend=True, mipmap=True)
+            xrat = DISPLAY.width/tex.ix
+            yrat = DISPLAY.height/tex.iy
+            if yrat < xrat:
+                xrat = yrat
+            wi, hi = tex.ix * xrat, tex.iy * xrat
+
+            slide.set_draw_details(shader,[tex])
+        #        slide.scale(wi, hi, 1.0)
+            slide.set_scale(wi, hi, 1.0) 
+            slide.set_alpha(0)
+            self.fileQ.task_done()
+
+    # OSC Methods
+    # @_liblo.make_method('/alpha', 'f')
+    # def button_cb(self, path, args):
+    #         print args
+    #         self.sprite.set_alpha(args[0])
 
                     
 
