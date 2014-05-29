@@ -92,12 +92,14 @@ class Slide(pi3d.Sprite):
 
 
 class Container:
-    def __init__(self):
+    def __init__(self, parent):
+        self.parent = parent
         self.nSli = 8
         self.slides = [None]*self.nSli
         half = 0
         for i in range(self.nSli):
             self.slides[i] = Slide()
+
         for i in range(self.nSli):
             # never mind this, hop is just to fill in the first series of images from
             # inside-out: 4 3 5 2 6 1 7 0.
@@ -187,7 +189,7 @@ class pytaVSL(object):
         self.fileQ = queue.Queue()
 
         # Containers
-        self.ctnr = Container()
+        self.ctnr = Container(parent=self)
 
         # Slides per container
         self.ctnr.nSli = 8
@@ -195,7 +197,7 @@ class pytaVSL(object):
 
     def on_start(self):
         if self.port is not None:
-            self.server = _liblo.ServerThread(self.port)
+            self.server = liblo.ServerThread(self.port)
             self.server.register_methods(self)
             self.server.start()
             print("Listening on OSC port: " + str(self.port))
@@ -214,13 +216,13 @@ class pytaVSL(object):
             fname = item[0]
             slide = item[1]
             tex = pi3d.Texture(item[0], blend=True, mipmap=True)
-            xrat = DISPLAY.width/tex.ix
-            yrat = DISPLAY.height/tex.iy
+            xrat = self.DISPLAY.width/tex.ix
+            yrat = self.DISPLAY.height/tex.iy
             if yrat < xrat:
                 xrat = yrat
             wi, hi = tex.ix * xrat, tex.iy * xrat
 
-            slide.set_draw_details(shader,[tex])
+            slide.set_draw_details(self.shader,[tex])
         #        slide.scale(wi, hi, 1.0)
             slide.set_scale(wi, hi, 1.0) 
             slide.set_alpha(0)
@@ -233,36 +235,40 @@ class pytaVSL(object):
     #         self.sprite.set_alpha(args[0])
 
 
-pyta = pytaVSL(56418)
-                    
+
+
+# MAIN APP #
+
+pyta = pytaVSL()
+pyta.on_start()
 
 # ctnr = Container()
 
-# t = threading.Thread(target=tex_load)
-# t.daemon = True
-# t.start()
+t = threading.Thread(target=pyta.tex_load)
+t.daemon = True
+t.start()
 
-# fileQ.join()
+pyta.fileQ.join()
 
-# mykeys = pi3d.Keyboard()
-# CAMERA = pi3d.Camera.instance()
-# CAMERA.was_moved = False # to save a tiny bit of work each loop
+mykeys = pi3d.Keyboard()
+pyta.CAMERA = pi3d.Camera.instance()
+pyta.CAMERA.was_moved = False # to save a tiny bit of work each loop
 
-# while DISPLAY.loop_running():
+while pyta.DISPLAY.loop_running():
 # #    ctnr.update()
-#     ctnr.draw()
+    pyta.ctnr.draw()
+    k = mykeys.read()
+    
+    if k> -1:
+        first = False
+        if k == 27: #ESC
+            mykeys.close()
+            DISPLAY.stop()
+            break
+        #         if k == 115: #S
+        #             ctnr.posit()
+        #         else:
+        #             ctnr.join()
 
-#     k = mykeys.read()
-
-#     if k> -1:
-#         first = False
-#         if k == 27: #ESC
-#             mykeys.close()
-#             DISPLAY.stop()
-#             break
-#         if k == 115: #S
-#             ctnr.posit()
-#         else:
-#             ctnr.join()
-
-# DISPLAY.destroy()
+pyta.DISPLAY.destroy()
+pyta.destroy()
