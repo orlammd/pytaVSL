@@ -254,7 +254,7 @@ class pytaVSL(object):
     def slide_rotate_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if path == "/pyta/slide/rotate":
-                self.ctnr.slides[args[0]].set_scale(args[1], args[2], args[3])
+                self.ctnr.slides[args[0]].set_angle(args[1], args[2], args[3])
             elif path == "/pyta/slide/rotate_x":
                 self.ctnr.slides[args[0]].set_angle(args[1], self.ctnr.slides[args[0]].ay, self.ctnr.slides[args[0]].az)
             elif path == "/pyta/slide/rotate_y":
