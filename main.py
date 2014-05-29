@@ -78,6 +78,7 @@ class Container:
         self.slides[self.focus].visible = True
         self.slides[self.focus].fadeup = True
 
+
     def update(self):
         # for each slide check the fade direction, bump the alpha and clip
         pass
@@ -174,10 +175,10 @@ class pytaVSL(object):
             self.fileQ.task_done()
 
     # OSC Methods
-    # @_liblo.make_method('/alpha', 'f')
-    # def button_cb(self, path, args):
-    #         print args
-    #         self.sprite.set_alpha(args[0])
+    @liblo.make_method('/alpha', 'f')
+    def button_cb(self, path, args):
+            print(args)
+            self.ctnr.slides[self.ctnr.focus].translate(args[0], 0.0, 0.0)
 
 
 
