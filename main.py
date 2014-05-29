@@ -173,23 +173,36 @@ class pytaVSL(object):
 
             slide.set_draw_details(self.shader,[tex])
             slide.set_scale(wi, hi, 1.0) 
-#            slide.set_alpha(0)
             self.fileQ.task_done()
 
+    def destroy(self):
+        self.DISPLAY.destroy()
+
     # OSC Methods
-    @liblo.make_method('/alpha', 'if')
+    @liblo.make_method('/pyta/slide/alpha', 'if')
     def button_cb(self, path, args):
-#            self.ctnr.slides[self.ctnr.focus].translate(args[0], 0.0, 0.0)
         if args[0] < self.ctnr.nSli:
-            slide = self.ctnr.slides[args[0]]
             self.ctnr.slides[args[0]].set_alpha(args[1])
-            self.ctnr.slides[args[0]].set_fog((1.0, 0.0, 0.0, 0.4), 10.0)
+        else:
+            print("OSC ARGS ERROR: Slide number out of range")
+
+    @liblo.make_method('/pyta/slide/position', 'ifff')
+    def button_cb(self, path, args):
+        if args[0] < self.ctnr.nSli:
+            self.ctnr.slides[args[0]].position(args[1], args[2], args[3])
+        else:
+            print("OSC ARGS ERROR: Slide number out of range")
+
+    @liblo.make_method('/pyta/slide/translate', 'ifff')
+    def button_cb(self, path, args):
+        if args[0] < self.ctnr.nSli:
+            self.ctnr.slides[args[0]].translate(args[1], args[2], args[3])
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
 
-    def destroy(self):
-        self.DISPLAY.destroy()
+
+
 
 
 ########## MAIN APP ##########
@@ -209,6 +222,7 @@ pyta.CAMERA.was_moved = False # to save a tiny bit of work each loop
 
 while pyta.DISPLAY.loop_running():
     pyta.ctnr.draw()
+
     k = mykeys.read()
     
     if k> -1:
