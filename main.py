@@ -183,7 +183,7 @@ class pytaVSL(object):
         if args[0] < self.ctnr.nSli:
             slide = self.ctnr.slides[args[0]]
             self.ctnr.slides[args[0]].set_alpha(args[1])
-            self.ctnr.slides[args[0]].set_material((1.0, 0.0, 0.0))
+            self.ctnr.slides[args[0]].set_fog((1.0, 0.0, 0.0, 0.4), 10.0)
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
