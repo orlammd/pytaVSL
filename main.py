@@ -187,18 +187,40 @@ class pytaVSL(object):
             print("OSC ARGS ERROR: Slide number out of range")
 
     @liblo.make_method('/pyta/slide/position', 'ifff')
+    @liblo.make_method('/pyta/slide/position_x', 'if')
+    @liblo.make_method('/pyta/slide/position_y', 'if')
+    @liblo.make_method('/pyta/slide/position_z', 'if')
     def button_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
-            self.ctnr.slides[args[0]].position(args[1], args[2], args[3])
+            if path == "/pyta/slide/position":
+                self.ctnr.slides[args[0]].position(args[1], args[2], args[3])
+            elif path == "/pyta/slide/position_x":
+                self.ctnr.slides[args[0]].position(args[1], self.ctnr.slides[args[0]].y(), self.ctnr.slides[args[0]].z())
+            elif path == "/pyta/slide/position_y":
+                self.ctnr.slides[args[0]].position(self.ctnr.slides[args[0]].x(), args[1], self.ctnr.slides[args[0]].z())
+            elif path == "/pyta/slide/position_z":
+                self.ctnr.slides[args[0]].position(self.ctnr.slides[args[0]].x(), self.ctnr.slides[args[0]].y(), args[1])
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
     @liblo.make_method('/pyta/slide/translate', 'ifff')
+    @liblo.make_method('/pyta/slide/translate_x', 'if')
+    @liblo.make_method('/pyta/slide/translate_y', 'if')
+    @liblo.make_method('/pyta/slide/translate_z', 'if')
     def button_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
-            self.ctnr.slides[args[0]].translate(args[1], args[2], args[3])
+            if path == "/pyta/slide/translate":
+                self.ctnr.slides[args[0]].translate(args[1], args[2], args[3])
+            elif path == "/pyta/slide/translate_x":
+                self.ctnr.slides[args[0]].translate(args[1], 0.0, 0.0)
+            elif path == "/pyta/slide/translate_y":
+                self.ctnr.slides[args[0]].translate(0.0, args[1], 0.0)
+            elif path == "/pyta/slide/translate_z":
+                self.ctnr.slides[args[0]].translate(0.0, 0.0, args[1])
+                
         else:
             print("OSC ARGS ERROR: Slide number out of range")
+
 
 
 
