@@ -64,13 +64,6 @@ class Container:
         for i in range(self.nSli):
             self.slides[i] = Slide()
 
-#        for i in range(self.nSli):
-            # never mind this, hop is just to fill in the first series of images from
-            # inside-out: 4 3 5 2 6 1 7 0.
-#            half += (i%2)
-#            step = (1,-1)[i%2]
-#            hop = 4 + step*half
-
             self.slides[i].positionZ(0.8-(i/10))
             item = [self.parent.iFiles[i%self.parent.nFi], self.slides[i]]
             self.parent.fileQ.put(item)
@@ -79,11 +72,6 @@ class Container:
         self.focus_fi = 0 # the file index of the focused image
         self.slides[self.focus].visible = True
         self.slides[self.focus].fadeup = True
-
-
-    def update(self):
-        # for each slide check the fade direction, bump the alpha and clip
-        pass
 
     def draw(self):
         # slides have to be drawn back to front for transparency to work.
@@ -94,9 +82,6 @@ class Container:
             ix = (self.focus+i+1)%self.nSli
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
-#                self.slides[ix].set_alpha(1.0)
-#            else:
-#                self.slides[ix].set_alpha(0.0)
             
     def posit(self):
         self.slides[self.focus].translate(random.random()*20-5, random.random()*20-5, 0.0)
@@ -265,6 +250,20 @@ class pytaVSL(object):
             print("OSC ARGS ERROR: Slide number out of range")
 
 
+    @liblo.make_method('/pyta/slide/load_file', 'is')
+    def slide_load_file_cb(self, path, args):
+        if self.ctnr.slides[args[0]].alpha != 0:
+            print("WARNING: you're loading a file in a potentially visible slide - loading takes a bit of time, the effect might not render immediately")
+        fexist = False
+        for i in range(self.nFi):
+            if args[1] == self.iFiles[i]:
+                item = [self.iFiles[i], self.ctnr.slides[args[0]]]
+                self.fileQ.put(item)
+                print("loading file " + args[1])
+                fexist = True
+        if fexist == False:
+            print(args[1] + ": no such file in the current list - please consider adding it with /pyta/slide/add_file")
+                
 
 
 
