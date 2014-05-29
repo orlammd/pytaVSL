@@ -179,6 +179,17 @@ class pytaVSL(object):
         self.DISPLAY.destroy()
 
     # OSC Methods
+    @liblo.make_method('/pyta/slide/visible', 'ii')
+    def slide_visible_cb(self, path, args):
+        if args[0] < self.ctnr.nSli:
+            if args[1]:
+                self.ctnr.slides[args[0]].visible = True
+            else:
+                self.ctnr.slides[args[0]].visible = False                
+        else:
+            print("OSC ARGS ERROR: Slide number out of range")        
+
+
     @liblo.make_method('/pyta/slide/alpha', 'if')
     def slide_alpha_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
@@ -216,8 +227,7 @@ class pytaVSL(object):
             elif path == "/pyta/slide/translate_y":
                 self.ctnr.slides[args[0]].translate(0.0, args[1], 0.0)
             elif path == "/pyta/slide/translate_z":
-                self.ctnr.slides[args[0]].translate(0.0, 0.0, args[1])
-                
+                self.ctnr.slides[args[0]].translate(0.0, 0.0, args[1])   
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
