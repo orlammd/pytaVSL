@@ -189,7 +189,6 @@ class pytaVSL(object):
         else:
             print("OSC ARGS ERROR: Slide number out of range")        
 
-
     @liblo.make_method('/pyta/slide/alpha', 'if')
     def slide_alpha_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
@@ -231,7 +230,22 @@ class pytaVSL(object):
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
-
+    @liblo.make_method('/pyta/slide/scale', 'ifff')
+    @liblo.make_method('/pyta/slide/scale_x', 'if')
+    @liblo.make_method('/pyta/slide/scale_y', 'if')
+    @liblo.make_method('/pyta/slide/scale_z', 'if')
+    def slide_scale_cb(self, path, args):
+        if args[0] < self.ctnr.nSli:
+            if path == "/pyta/slide/scale":
+                self.ctnr.slides[args[0]].set_scale(args[1], args[2], args[3])
+            elif path == "/pyta/slide/scale_x":
+                self.ctnr.slides[args[0]].set_scale(args[1], self.ctnr.slides[args[0]].sy, self.ctnr.slides[args[0]].sz)
+            elif path == "/pyta/slide/scale_y":
+                self.ctnr.slides[args[0]].set_scale(self.ctnr.slides[args[0]].sx, args[1], self.ctnr.slides[args[0]].sz)
+            elif path == "/pyta/slide/scale_z":
+                self.ctnr.slides[args[0]].set_scale(self.ctnr.slides[args[0]].sx, self.ctnr.slides[args[0]].sy, args[1])
+        else:
+            print("OSC ARGS ERROR: Slide number out of range")
 
 
 
