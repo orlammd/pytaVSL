@@ -53,6 +53,8 @@ class Slide(pi3d.Sprite):
         self.rotateToZ(az)
 
 
+
+
 class Container:
     def __init__(self, parent):
         self.parent = parent
@@ -62,18 +64,18 @@ class Container:
         for i in range(self.nSli):
             self.slides[i] = Slide()
 
-        for i in range(self.nSli):
+#        for i in range(self.nSli):
             # never mind this, hop is just to fill in the first series of images from
             # inside-out: 4 3 5 2 6 1 7 0.
-            half += (i%2)
-            step = (1,-1)[i%2]
-            hop = 4 + step*half
+#            half += (i%2)
+#            step = (1,-1)[i%2]
+#            hop = 4 + step*half
 
-            self.slides[hop].positionZ(0.8-(hop/10))
-            item = [self.parent.iFiles[hop%self.parent.nFi], self.slides[hop]]
+            self.slides[i].positionZ(0.8-(i/10))
+            item = [self.parent.iFiles[i%self.parent.nFi], self.slides[i]]
             self.parent.fileQ.put(item)
 
-        self.focus = 3 # holds the index of the focused image
+        self.focus = 0 # holds the index of the focused image
         self.focus_fi = 0 # the file index of the focused image
         self.slides[self.focus].visible = True
         self.slides[self.focus].fadeup = True
@@ -92,9 +94,9 @@ class Container:
             ix = (self.focus+i+1)%self.nSli
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
-                self.slides[ix].set_alpha(1.0)
-            else:
-                self.slides[ix].set_alpha(0.0)
+#                self.slides[ix].set_alpha(1.0)
+#            else:
+#                self.slides[ix].set_alpha(0.0)
             
     def posit(self):
         self.slides[self.focus].translate(random.random()*20-5, random.random()*20-5, 0.0)
@@ -171,16 +173,23 @@ class pytaVSL(object):
 
             slide.set_draw_details(self.shader,[tex])
             slide.set_scale(wi, hi, 1.0) 
-            slide.set_alpha(0)
+#            slide.set_alpha(0)
             self.fileQ.task_done()
 
     # OSC Methods
-    @liblo.make_method('/alpha', 'f')
+    @liblo.make_method('/alpha', 'if')
     def button_cb(self, path, args):
-            print(args)
-            self.ctnr.slides[self.ctnr.focus].translate(args[0], 0.0, 0.0)
+#            self.ctnr.slides[self.ctnr.focus].translate(args[0], 0.0, 0.0)
+        if args[0] < self.ctnr.nSli:
+            slide = self.ctnr.slides[args[0]]
+            self.ctnr.slides[args[0]].set_alpha(args[1])
+            self.ctnr.slides[args[0]].set_material((1.0, 0.0, 0.0))
+        else:
+            print("OSC ARGS ERROR: Slide number out of range")
 
 
+    def destroy(self):
+        self.DISPLAY.destroy()
 
 
 ########## MAIN APP ##########
@@ -206,12 +215,12 @@ while pyta.DISPLAY.loop_running():
         first = False
         if k == 27: #ESC
             mykeys.close()
-            DISPLAY.stop()
+            pyta.DISPLAY.stop()
             break
         #         if k == 115: #S
         #             ctnr.posit()
         #         else:
         #             ctnr.join()
 
-pyta.DISPLAY.destroy()
 pyta.destroy()
+
