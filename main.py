@@ -252,7 +252,7 @@ class pytaVSL(object):
 
     @liblo.make_method('/pyta/slide/load_file', 'is')
     def slide_load_file_cb(self, path, args):
-        if self.ctnr.slides[args[0]].alpha != 0:
+        if self.ctnr.slides[args[0]].visible:
             print("WARNING: you're loading a file in a potentially visible slide - loading takes a bit of time, the effect might not render immediately")
         fexist = False
         for i in range(self.nFi):
