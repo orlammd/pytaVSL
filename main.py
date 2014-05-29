@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-"""This is the main file of pytaVSL, and aims to provide a VJing and lights-projector-virtualisation tool.
+"""This is the main file of pytaVSL. It aims to provide a VJing and lights-projector-virtualisation tool.
 
 Images are loaded as textures, which then are mapped onto slides (canvases - 8 of them).
 
@@ -19,8 +19,31 @@ from six.moves import queue
 LOGGER = pi3d.Log.logger(__name__)
 LOGGER.info("Log using this expression.")
 
+# OSC Server
+class OSCserver(object):
+    def __init__(self, port=56418):
+        self.port = port
+
+    def on_start(self):
+        if self.port is not None:
+            print("Listening on: " + str(self.port))
+            self.server = _liblo.ServerThread(self.port)
+            self.server.register_methods(self)
+            self.server.start()
+
+    def on_exit(self):
+        if self.port is not None:
+            self.server.stop()
+            del self.server
+
+    # OSC Methods
+    @_liblo.make_method('/alpha', 'f')
+    def button_cb(self, path, args):
+        self.sprite.set_alpha(args[0])
+
+
 # Setup display and initialiser pi3d
-DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=18)
+DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
 shader = pi3d.Shader("uv_flat")
 CAMERA = pi3d.Camera(is_3d=False)
 drawFlag = False
@@ -184,7 +207,6 @@ fileQ.join()
 mykeys = pi3d.Keyboard()
 CAMERA = pi3d.Camera.instance()
 CAMERA.was_moved = False # to save a tiny bit of work each loop
-
 
 while DISPLAY.loop_running():
 #    ctnr.update()
