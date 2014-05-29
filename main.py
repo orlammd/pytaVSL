@@ -21,41 +21,41 @@ LOGGER.info("Log using this expression.")
 
 
 # Setup display and initialiser pi3d
-DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
-shader = pi3d.Shader("uv_flat")
-CAMERA = pi3d.Camera(is_3d=False)
-drawFlag = False
+# DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
+# shader = pi3d.Shader("uv_flat")
+# CAMERA = pi3d.Camera(is_3d=False)
+# drawFlag = False
 
 
-# Loading files in the queue
-iFiles = glob.glob("pix/*.*")
-nFi = len(iFiles)
-fileQ = queue.Queue()
+# # Loading files in the queue
+# iFiles = glob.glob("pix/*.*")
+# nFi = len(iFiles)
+# fileQ = queue.Queue()
 
-# Slides
-nSli = 8
-alpha_step=0.025
+# # Slides
+# nSli = 8
+# alpha_step=0.025
 
-def tex_load():
-    """ Threaded function. mimap = False will make it faster.
-    """
-    while True:
-        item = fileQ.get()
-        # reminder, item is [filename, target Slide]
-        fname = item[0]
-        slide = item[1]
-        tex = pi3d.Texture(item[0], blend=True, mipmap=True)
-        xrat = DISPLAY.width/tex.ix
-        yrat = DISPLAY.height/tex.iy
-        if yrat < xrat:
-            xrat = yrat
-        wi, hi = tex.ix * xrat, tex.iy * xrat
+# def tex_load():
+#     """ Threaded function. mimap = False will make it faster.
+#     """
+#     while True:
+#         item = fileQ.get()
+#         # reminder, item is [filename, target Slide]
+#         fname = item[0]
+#         slide = item[1]
+#         tex = pi3d.Texture(item[0], blend=True, mipmap=True)
+#         xrat = DISPLAY.width/tex.ix
+#         yrat = DISPLAY.height/tex.iy
+#         if yrat < xrat:
+#             xrat = yrat
+#         wi, hi = tex.ix * xrat, tex.iy * xrat
 
-        slide.set_draw_details(shader,[tex])
-#        slide.scale(wi, hi, 1.0)
-        slide.set_scale(wi, hi, 1.0) 
-        slide.set_alpha(0)
-        fileQ.task_done()
+#         slide.set_draw_details(shader,[tex])
+# #        slide.scale(wi, hi, 1.0)
+#         slide.set_scale(wi, hi, 1.0) 
+#         slide.set_alpha(0)
+#         fileQ.task_done()
 
 
 class Slide(pi3d.Sprite):
@@ -106,7 +106,7 @@ class Container:
 
             self.slides[hop].positionZ(0.8-(hop/10))
             item = [iFiles[hop%nFi], self.slides[hop]]
-            fileQ.put(item)
+            self.parent.fileQ.put(item)
 
         self.focus = 3 # holds the index of the focused image
         self.focus_fi = 0 # the file index of the focused image
@@ -231,35 +231,37 @@ class pytaVSL(object):
     #         print args
     #         self.sprite.set_alpha(args[0])
 
+
+pyta = pytaVSL(56418)
                     
 
-ctnr = Container()
+# ctnr = Container()
 
-t = threading.Thread(target=tex_load)
-t.daemon = True
-t.start()
+# t = threading.Thread(target=tex_load)
+# t.daemon = True
+# t.start()
 
-fileQ.join()
+# fileQ.join()
 
-mykeys = pi3d.Keyboard()
-CAMERA = pi3d.Camera.instance()
-CAMERA.was_moved = False # to save a tiny bit of work each loop
+# mykeys = pi3d.Keyboard()
+# CAMERA = pi3d.Camera.instance()
+# CAMERA.was_moved = False # to save a tiny bit of work each loop
 
-while DISPLAY.loop_running():
-#    ctnr.update()
-    ctnr.draw()
+# while DISPLAY.loop_running():
+# #    ctnr.update()
+#     ctnr.draw()
 
-    k = mykeys.read()
+#     k = mykeys.read()
 
-    if k> -1:
-        first = False
-        if k == 27: #ESC
-            mykeys.close()
-            DISPLAY.stop()
-            break
-        if k == 115: #S
-            ctnr.posit()
-        else:
-            ctnr.join()
+#     if k> -1:
+#         first = False
+#         if k == 27: #ESC
+#             mykeys.close()
+#             DISPLAY.stop()
+#             break
+#         if k == 115: #S
+#             ctnr.posit()
+#         else:
+#             ctnr.join()
 
-DISPLAY.destroy()
+# DISPLAY.destroy()
