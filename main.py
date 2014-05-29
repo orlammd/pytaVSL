@@ -80,23 +80,7 @@ class Container:
 
     def update(self):
         # for each slide check the fade direction, bump the alpha and clip
-        for i in range(self.nSli):
-            a = self.slides[i].alpha()
-            print("nSlide: " + str(i) + " / alpha:" + str(a))
-            if self.slides[i].fadeup == True and a < 1:
-                a += alpha_step
-                self.slides[i].set_alpha(a)
-                self.slides[i].visible = True
-                self.slides[i].active = True
-            elif self.slides[i].fadeup == False and a > 0:
-                a -= alpha_step
-                self.slides[i].set_alpha(a)
-                self.slides[i].visible = True
-                self.slides[i].active = True
-            else:
-                if a <= 0:
-                    self.slides[i].visible = False
-                self.slides[i].active = False
+        pass
 
     def draw(self):
         # slides have to be drawn back to front for transparency to work.
