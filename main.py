@@ -93,11 +93,12 @@ class Slide(pi3d.Sprite):
 
 class Container:
     def __init__(self):
-        self.slides = [None]*nSli
+        self.nSli = 8
+        self.slides = [None]*self.nSli
         half = 0
-        for i in range(nSli):
+        for i in range(self.nSli):
             self.slides[i] = Slide()
-        for i in range(nSli):
+        for i in range(self.nSli):
             # never mind this, hop is just to fill in the first series of images from
             # inside-out: 4 3 5 2 6 1 7 0.
             half += (i%2)
@@ -105,7 +106,7 @@ class Container:
             hop = 4 + step*half
 
             self.slides[hop].positionZ(0.8-(hop/10))
-            item = [iFiles[hop%nFi], self.slides[hop]]
+            item = [self.parent.iFiles[hop%self.parent.nFi], self.slides[hop]]
             self.parent.fileQ.put(item)
 
         self.focus = 3 # holds the index of the focused image
@@ -115,7 +116,7 @@ class Container:
 
     def update(self):
         # for each slide check the fade direction, bump the alpha and clip
-        for i in range(nSli):
+        for i in range(self.nSli):
             a = self.slides[i].alpha()
             print("nSlide: " + str(i) + " / alpha:" + str(a))
             if self.slides[i].fadeup == True and a < 1:
@@ -138,8 +139,8 @@ class Container:
         # the 'focused' slide by definition at z=0.1, with deeper z
         # trailing to the left.  So start by drawing the one to the right
         # of 'focused', if it is set to visible.  It will be in the back.
-        for i in range(nSli):
-            ix = (self.focus+i+1)%nSli
+        for i in range(self.nSli):
+            ix = (self.focus+i+1)%self.nSli
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
                 self.slides[ix].set_alpha(1.0)
@@ -151,16 +152,16 @@ class Container:
 
     def other(self):
         self.slides[self.focus].visible = False
-        self.focus = (self.focus+int(10*random.random()))%nSli
+        self.focus = (self.focus+int(10*random.random()))%self.nSli
         self.slides[self.focus].visible = True
 
 
-    def join(self):
-        print(iFiles)
-        iFiles.extend(glob.glob("/home/orl/barons.png"))
-        nFi = len(iFiles)
-        print("And now")
-        print(iFiles)
+    # def join(self):
+    #     print(iFiles)
+    #     self.parent.iFiles.extend(glob.glob("/home/orl/barons.png"))
+    #     self.parent.nFi = len(iFiles)
+    #     print("And now")
+    #     print(iFiles)
 #        self.slides[self.focus-1].visible = True
 #        print(self.slides[self.focus].y())
 #        self.slides[self.focus].translate(0.0, -self.slides[self.focus].sy/2.0, 0.0)
@@ -182,14 +183,14 @@ class pytaVSL(object):
 
         # Loading files in the queue
         self.iFiles = glob.glob("pix/*.*")
-        self.nFi = len(iFiles)
+        self.nFi = len(self.iFiles)
         self.fileQ = queue.Queue()
 
         # Containers
         self.ctnr = Container()
 
         # Slides per container
-        self.nSli = 8
+        self.ctnr.nSli = 8
         self.alpha_step=0.025
 
     def on_start(self):
