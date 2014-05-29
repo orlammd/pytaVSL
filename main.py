@@ -13,6 +13,7 @@ import time, glob, threading
 import pi3d
 import liblo
 import random
+import os.path
 
 from six.moves import queue
 
@@ -262,10 +263,18 @@ class pytaVSL(object):
                 print("loading file " + args[1])
                 fexist = True
         if fexist == False:
-            print(args[1] + ": no such file in the current list - please consider adding it with /pyta/slide/add_file")
+            print(args[1] + ": no such file in the current list - please consider adding it with /pyta/add_file ,s [path to the file]")
                 
-
-
+    @liblo.make_method('/pyta/add_file', 's')
+    def add_file_cb(self, path, args):
+        if os.path.exists(args[0]):
+            self.iFiles.extend(glob.glob(args[0]))
+            self.nFi = len(self.iFiles)
+            print("file " + args[0] + " added to the list:")
+            for i in range(self.nFi):
+                print("  + " + self.iFiles[i])
+        else:
+            print("ERREUR: " + args[0] + ": no such file or directory")
 
 ########## MAIN APP ##########
 
