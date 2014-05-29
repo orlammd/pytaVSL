@@ -180,7 +180,7 @@ class pytaVSL(object):
 
     # OSC Methods
     @liblo.make_method('/pyta/slide/alpha', 'if')
-    def button_cb(self, path, args):
+    def slide_alpha_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             self.ctnr.slides[args[0]].set_alpha(args[1])
         else:
@@ -190,7 +190,7 @@ class pytaVSL(object):
     @liblo.make_method('/pyta/slide/position_x', 'if')
     @liblo.make_method('/pyta/slide/position_y', 'if')
     @liblo.make_method('/pyta/slide/position_z', 'if')
-    def button_cb(self, path, args):
+    def slide_position_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if path == "/pyta/slide/position":
                 self.ctnr.slides[args[0]].position(args[1], args[2], args[3])
@@ -207,7 +207,7 @@ class pytaVSL(object):
     @liblo.make_method('/pyta/slide/translate_x', 'if')
     @liblo.make_method('/pyta/slide/translate_y', 'if')
     @liblo.make_method('/pyta/slide/translate_z', 'if')
-    def button_cb(self, path, args):
+    def slide_translate_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if path == "/pyta/slide/translate":
                 self.ctnr.slides[args[0]].translate(args[1], args[2], args[3])
