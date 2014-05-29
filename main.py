@@ -247,6 +247,23 @@ class pytaVSL(object):
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
+    @liblo.make_method('/pyta/slide/rotate', 'ifff')
+    @liblo.make_method('/pyta/slide/rotate_x', 'if')
+    @liblo.make_method('/pyta/slide/rotate_y', 'if')
+    @liblo.make_method('/pyta/slide/rotate_z', 'if')
+    def slide_rotate_cb(self, path, args):
+        if args[0] < self.ctnr.nSli:
+            if path == "/pyta/slide/rotate":
+                self.ctnr.slides[args[0]].set_scale(args[1], args[2], args[3])
+            elif path == "/pyta/slide/rotate_x":
+                self.ctnr.slides[args[0]].set_angle(args[1], self.ctnr.slides[args[0]].ay, self.ctnr.slides[args[0]].az)
+            elif path == "/pyta/slide/rotate_y":
+                self.ctnr.slides[args[0]].set_angle(self.ctnr.slides[args[0]].ax, args[1], self.ctnr.slides[args[0]].az)
+            elif path == "/pyta/slide/rotate_z":
+                self.ctnr.slides[args[0]].set_angle(self.ctnr.slides[args[0]].ax, self.ctnr.slides[args[0]].ay, args[1])
+        else:
+            print("OSC ARGS ERROR: Slide number out of range")
+
 
 
 
