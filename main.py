@@ -20,44 +20,6 @@ LOGGER = pi3d.Log.logger(__name__)
 LOGGER.info("Log using this expression.")
 
 
-# Setup display and initialiser pi3d
-# DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
-# shader = pi3d.Shader("uv_flat")
-# CAMERA = pi3d.Camera(is_3d=False)
-# drawFlag = False
-
-
-# # Loading files in the queue
-# iFiles = glob.glob("pix/*.*")
-# nFi = len(iFiles)
-# fileQ = queue.Queue()
-
-# # Slides
-# nSli = 8
-# alpha_step=0.025
-
-# def tex_load():
-#     """ Threaded function. mimap = False will make it faster.
-#     """
-#     while True:
-#         item = fileQ.get()
-#         # reminder, item is [filename, target Slide]
-#         fname = item[0]
-#         slide = item[1]
-#         tex = pi3d.Texture(item[0], blend=True, mipmap=True)
-#         xrat = DISPLAY.width/tex.ix
-#         yrat = DISPLAY.height/tex.iy
-#         if yrat < xrat:
-#             xrat = yrat
-#         wi, hi = tex.ix * xrat, tex.iy * xrat
-
-#         slide.set_draw_details(shader,[tex])
-# #        slide.scale(wi, hi, 1.0)
-#         slide.set_scale(wi, hi, 1.0) 
-#         slide.set_alpha(0)
-#         fileQ.task_done()
-
-
 class Slide(pi3d.Sprite):
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
@@ -223,7 +185,6 @@ class pytaVSL(object):
             wi, hi = tex.ix * xrat, tex.iy * xrat
 
             slide.set_draw_details(self.shader,[tex])
-        #        slide.scale(wi, hi, 1.0)
             slide.set_scale(wi, hi, 1.0) 
             slide.set_alpha(0)
             self.fileQ.task_done()
@@ -237,12 +198,10 @@ class pytaVSL(object):
 
 
 
-# MAIN APP #
+########## MAIN APP ##########
 
 pyta = pytaVSL()
 pyta.on_start()
-
-# ctnr = Container()
 
 t = threading.Thread(target=pyta.tex_load)
 t.daemon = True
@@ -255,7 +214,6 @@ pyta.CAMERA = pi3d.Camera.instance()
 pyta.CAMERA.was_moved = False # to save a tiny bit of work each loop
 
 while pyta.DISPLAY.loop_running():
-# #    ctnr.update()
     pyta.ctnr.draw()
     k = mykeys.read()
     
