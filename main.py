@@ -39,6 +39,7 @@ class Slide(pi3d.Sprite):
         # Mask Slide
         self.mask = pi3d.Sprite()
 
+
     def set_position(self, x, y, z):
         self.position(x, y, z)
         self.mask.position(x, y, z+0.1)
@@ -127,6 +128,10 @@ class Container:
             self.slides[i].mask.positionZ(0.81-(i/10))
 
 
+            # Text Slides
+            self.slides[i].string.set_shader(self.parent.shader)
+            self.slides[i].string.positionZ(0.79-(i/10))
+
         self.focus = 0 # holds the index of the focused image
 #        self.focus_fi = 0 # the file index of the focused image
         self.slides[self.focus].visible = True
@@ -145,8 +150,16 @@ class Container:
             #     self.matslides[ix].draw()
             #     print(ix)
             if self.slides[ix].visible == True:
+        # Text Slides
+        self.text = "--- SLIDE INFOS ---\n" + "Position: \n    x: " + str(self.x()) + " y: " + str(self.y()) + " z: " + str(self.z()) + "\n\nScale:\n    sx: " + str(self.sx) + " sy: " + str(self.sy) + " sz: " + str(self.sz) + "\n\nAngle:\n    ax: " + str(self.ax) + " ay: " + str(self.ay) + " az: " + str(self.az)
+        arialFont = pi3d.Font("../attempts/pi3d_demos/fonts/FreeMonoBoldOblique.ttf",  (221,0,170,255), 
+                      add_codepoints=[256])        
+        self.string = pi3d.String(font=arialFont, string=self.text, justify="l")
+
+                self.slides[ix].string.string = "--- SLIDE INFOS ---\nSlide Number: " + str(ix) + "\n\nPosition: \n    x: " + str(self.x()) + " y: " + str(self.y()) + " z: " + str(self.z()) + "\n\nScale:\n    sx: " + str(self.sx) + " sy: " + str(self.sy) + " sz: " + str(self.sz) + "\n\nAngle:\n    ax: " + str(self.ax) + " ay: " + str(self.ay) + " az: " + str(self.az))
                 self.slides[ix].mask.draw()
                 self.slides[ix].draw()
+                self.slides[ix].string.draw()
 
             
 
