@@ -92,10 +92,10 @@ class Container:
         # of 'focused', if it is set to visible.  It will be in the back.
         for i in range(self.nSli):
             ix = (self.focus+i+1)%self.nSli
-            print("matslide: " + str(self.matslides[ix].z()) + " / slide: " + str(self.slides[ix].z()))
             if self.matslides[ix].visible == True:
                 self.matslides[ix].set_scale(self.slides[ix].sx, self.slides[ix].sy, self.slides[ix].sz)
                 self.matslides[ix].draw()
+                print(ix)
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
 
@@ -118,7 +118,7 @@ class PytaVSL(object):
         self.fileQ = queue.Queue()
 
         # Containers
-        self.ctnr = Container(parent=self, nSli=1)
+        self.ctnr = Container(parent=self, nSli=8)
 
 
     def on_start(self):
@@ -164,7 +164,7 @@ class PytaVSL(object):
                 self.ctnr.matslides[args[0]].visible = True
             else:
                 self.ctnr.slides[args[0]].visible = False     
-                self.ctnr.slides[args[0]].visible = False
+                self.ctnr.matslides[args[0]].visible = False
         else:
             print("OSC ARGS ERROR: Slide number out of range")        
 
