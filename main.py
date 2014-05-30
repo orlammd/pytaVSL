@@ -68,51 +68,11 @@ class Slide(pi3d.Sprite):
         self.mask.rotateToZ(az)
 
 
-# class MetaSlide:
-#     def __init__(self):
-#         self.texslide = Slide()
-#         self.matslide = Slide()
-
-#         self.visible = False
-#         self.active = False
-#         self.fadeup = False
-
-#         # Scales
-#         self.sx = 1.0
-#         self.sy = 1.0
-#         self.sz = 1.0
-
-#         # Angle
-#         self.ax = 0.0
-#         self.ay = 0.0
-#         self.az = 0.0
-
-#     def set_scale(self, sx, sy, sz):
-#         self.sx = sx
-#         self.sy = sy
-#         self.sz = sz
-#         self.texslide.scale(sx, sy, sz)
-#         self.matslide.scale(sx, sy, sz)
-
-#     def set_angle(self, ax, ay, az):
-#         # set angle (absolute)
-#         self.ax = ax
-#         self.ay = ay
-#         self.az = az
-#         self.texsliderotateToX(ax)
-#         self.texsliderotateToY(ay)
-#         self.texsliderotateToZ(az)
-#         self.texsliderotateToX(ax)
-#         self.texsliderotateToY(ay)
-#         self.texsliderotateToZ(az)
-
-
 class Container:
     def __init__(self, parent, nSli):
         self.parent = parent
         self.nSli = nSli # number of slides per container
         self.slides = [None]*self.nSli
-#        self.matslides = [None]*self.nSli
         for i in range(self.nSli):
             # Textured Slides
             self.slides[i] = Slide()
@@ -130,6 +90,10 @@ class Container:
         self.focus = 0 # holds the index of the focused image
         self.slides[self.focus].visible = True
 
+    def slide_info(self, i):
+        self.slides[i].slide_infos = True
+
+
     def draw(self):
         # slides have to be drawn back to front for transparency to work.
         # the 'focused' slide by definition at z=0.1, with deeper z
@@ -138,15 +102,20 @@ class Container:
         for i in range(self.nSli):
             ix = (self.focus+i+1)%self.nSli
             if self.slides[ix].visible == True:
-                text = "--- SLIDE INFOS ---\nSlide Number: " + str(ix) + "\nPosition: \n    x: " + str(self.slides[ix].x()) + " y: " + str(self.slides[ix].y()) + " z: " + str(self.slides[ix].z()) + "\nScale:\n    sx: " + str(self.slides[ix].sx) + " sy: " + str(self.slides[ix].sy) + " sz: " + str(self.slides[ix].sz) + "\nAngle:\n    ax: " + str(self.slides[ix].ax) + " ay: " + str(self.slides[ix].ay) + " az: " + str(self.slides[ix].az)
-                arialFont = pi3d.Font("../attempts/pi3d_demos/fonts/FreeMonoBoldOblique.ttf",  (255,255,255,255), add_codepoints=[256], background_color=(0, 0, 0, 100))        
-                infostring = pi3d.String(font=arialFont, string=text, justify="l")
-                infostring.position(0, 0, 0.19)
-                infostring.set_shader(self.parent.shader)
-                infostring.scale(200, 200, 1.0)
-                self.slides[ix].mask.draw()
+                if self.slides[ix].slide_infos == True:
+                    text = "--- SLIDE INFOS ---\nSlide Number: " + str(ix) + "\nPosition: \n    x: " + str(self.slides[ix].x()) + " y: " + str(self.slides[ix].y()) + " z: " + str(self.slides[ix].z()) + "\nScale:\n    sx: " + str(self.slides[ix].sx) + " sy: " + str(self.slides[ix].sy) + " sz: " + str(self.slides[ix].sz) + "\nAngle:\n    ax: " + str(self.slides[ix].ax) + " ay: " + str(self.slides[ix].ay) + " az: " + str(self.slides[ix].az)
+                    arialFont = pi3d.Font("../attempts/pi3d_demos/fonts/FreeMonoBoldOblique.ttf",  (255,255,255,255), add_codepoints=[256], background_color=(0, 0, 0, 100))        
+                    infostring = pi3d.String(font=arialFont, string=text, justify="l")
+                    infostring.position(0, 0, 0.19)
+                    infostring.set_shader(self.parent.shader)
+                    infostring.scale(200, 200, 1.0)        
+                    self.slides[ix].mask.draw()
+                    infostring.draw()
+
                 self.slides[ix].draw()
-                infostring.draw()
+
+
+
 
             
 
@@ -204,16 +173,16 @@ class PytaVSL(object):
     def destroy(self):
         self.DISPLAY.destroy()
 
+
+
     # OSC Methods
     @liblo.make_method('/pyta/slide/visible', 'ii')
     def slide_visible_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if args[1]:
                 self.ctnr.slides[args[0]].visible = True
-#                self.ctnr.matslides[args[0]].visible = True
             else:
                 self.ctnr.slides[args[0]].visible = False     
-#                self.ctnr.matslides[args[0]].visible = False
         else:
             print("OSC ARGS ERROR: Slide number out of range")        
 
