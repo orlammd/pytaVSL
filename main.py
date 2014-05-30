@@ -25,11 +25,9 @@ class Slide(pi3d.Sprite):
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
-        self.active = False
-        self.fadeup = False
 
         # Mask Slide
-        self.mask = Slide()
+        self.mask = pi3d.Sprite()
 
         # Scales
         self.sx = 1.0
@@ -46,6 +44,7 @@ class Slide(pi3d.Sprite):
         self.sy = sy
         self.sz = sz
         self.scale(sx, sy, sz)
+        self.mask.scale(sx, sy, sz)
 
     def set_angle(self, ax, ay, az):
         # set angle (absolute)
@@ -55,6 +54,9 @@ class Slide(pi3d.Sprite):
         self.rotateToX(ax)
         self.rotateToY(ay)
         self.rotateToZ(az)
+        self.mask.rotateToX(ax)
+        self.mask.rotateToY(ay)
+        self.mask.rotateToZ(az)
 
 
 # class MetaSlide:
@@ -135,6 +137,7 @@ class Container:
             #     self.matslides[ix].draw()
             #     print(ix)
             if self.slides[ix].visible == True:
+                self.slides[ix].mask.draw()
                 self.slides[ix].draw()
 
             
