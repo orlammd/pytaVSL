@@ -127,11 +127,6 @@ class Container:
             self.slides[i].mask.set_material((1.0, 0.0, 0.0))
             self.slides[i].mask.positionZ(0.81-(i/10))
 
-
-            # Text Slides
-            self.slides[i].string.set_shader(self.parent.shader)
-            self.slides[i].string.positionZ(0.79-(i/10))
-
         self.focus = 0 # holds the index of the focused image
 #        self.focus_fi = 0 # the file index of the focused image
         self.slides[self.focus].visible = True
@@ -150,16 +145,15 @@ class Container:
             #     self.matslides[ix].draw()
             #     print(ix)
             if self.slides[ix].visible == True:
-        # Text Slides
-        self.text = "--- SLIDE INFOS ---\n" + "Position: \n    x: " + str(self.x()) + " y: " + str(self.y()) + " z: " + str(self.z()) + "\n\nScale:\n    sx: " + str(self.sx) + " sy: " + str(self.sy) + " sz: " + str(self.sz) + "\n\nAngle:\n    ax: " + str(self.ax) + " ay: " + str(self.ay) + " az: " + str(self.az)
-        arialFont = pi3d.Font("../attempts/pi3d_demos/fonts/FreeMonoBoldOblique.ttf",  (221,0,170,255), 
-                      add_codepoints=[256])        
-        self.string = pi3d.String(font=arialFont, string=self.text, justify="l")
-
-                self.slides[ix].string.string = "--- SLIDE INFOS ---\nSlide Number: " + str(ix) + "\n\nPosition: \n    x: " + str(self.x()) + " y: " + str(self.y()) + " z: " + str(self.z()) + "\n\nScale:\n    sx: " + str(self.sx) + " sy: " + str(self.sy) + " sz: " + str(self.sz) + "\n\nAngle:\n    ax: " + str(self.ax) + " ay: " + str(self.ay) + " az: " + str(self.az))
+                text = "--- SLIDE INFOS ---\nSlide Number: " + str(ix) + "\n\nPosition: \n    x: " + str(self.slides[ix].x()) + " y: " + str(self.slides[ix].y()) + " z: " + str(self.slides[ix].z()) + "\n\nScale:\n    sx: " + str(self.slides[ix].sx) + " sy: " + str(self.slides[ix].sy) + " sz: " + str(self.slides[ix].sz) + "\n\nAngle:\n    ax: " + str(self.slides[ix].ax) + " ay: " + str(self.slides[ix].ay) + " az: " + str(self.slides[ix].az))
+                arialFont = pi3d.Font("../attempts/pi3d_demos/fonts/FreeMonoBoldOblique.ttf",  (221,0,170,255), add_codepoints=[256])        
+                infostring = pi3d.String(font=arialFont, string=self.text, justify="l")
+                infostring.positionZ(0.19)
+                infostring.set_shader(self.parent.shader)
+                infostring.scale(500, 500, 1.0)
                 self.slides[ix].mask.draw()
                 self.slides[ix].draw()
-                self.slides[ix].string.draw()
+                infostring.draw()
 
             
 
