@@ -57,21 +57,33 @@ class Slide(pi3d.Sprite):
 
 
 class Container:
-    def __init__(self, parent):
+    def __init__(self, parent, nSli):
         self.parent = parent
-        self.nSli = 8
+        self.nSli = nSli # number of slides per container
         self.slides = [None]*self.nSli
+        self.matslides = [None]*self.nSli
         for i in range(self.nSli):
+            # Textured Slides
             self.slides[i] = Slide()
 
             self.slides[i].positionZ(0.8-(i/10))
             item = [self.parent.iFiles[i%self.parent.nFi], self.slides[i]]
             self.parent.fileQ.put(item)
 
+
+            # Material Slides
+            self.matslides[i] = Slide()
+
+            self.matslides[i].set_shader(self.parent.matsh)
+            self.matslides[i].set_material((1.0, 0.0, 0.0))
+            self.matslides[i].positionZ(0.85-(i/10))
+
+
         self.focus = 0 # holds the index of the focused image
 #        self.focus_fi = 0 # the file index of the focused image
         self.slides[self.focus].visible = True
 #        self.slides[self.focus].fadeup = True
+        self.matslides[self.focus].visible = True
 
     def draw(self):
         # slides have to be drawn back to front for transparency to work.
@@ -80,8 +92,13 @@ class Container:
         # of 'focused', if it is set to visible.  It will be in the back.
         for i in range(self.nSli):
             ix = (self.focus+i+1)%self.nSli
+            print("matslide: " + str(self.matslides[ix].z()) + " / slide: " + str(self.slides[ix].z()))
+            if self.matslides[ix].visible == True:
+                self.matslides[ix].set_scale(self.slides[ix].sx, self.slides[ix].sy, self.slides[ix].sz)
+                self.matslides[ix].draw()
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
+
             
 
 class PytaVSL(object):
@@ -92,6 +109,7 @@ class PytaVSL(object):
         # setup OpenGL
         self.DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
         self.shader = pi3d.Shader("uv_flat")
+        self.matsh = pi3d.Shader("mat_light")
         self.CAMERA = pi3d.Camera(is_3d=False)
 
         # Loading files in the queue
@@ -100,10 +118,8 @@ class PytaVSL(object):
         self.fileQ = queue.Queue()
 
         # Containers
-        self.ctnr = Container(parent=self)
+        self.ctnr = Container(parent=self, nSli=1)
 
-        # Slides per container
-        self.ctnr.nSli = 8
 
     def on_start(self):
         if self.port is not None:
@@ -145,8 +161,10 @@ class PytaVSL(object):
         if args[0] < self.ctnr.nSli:
             if args[1]:
                 self.ctnr.slides[args[0]].visible = True
+                self.ctnr.matslides[args[0]].visible = True
             else:
-                self.ctnr.slides[args[0]].visible = False                
+                self.ctnr.slides[args[0]].visible = False     
+                self.ctnr.slides[args[0]].visible = False
         else:
             print("OSC ARGS ERROR: Slide number out of range")        
 
