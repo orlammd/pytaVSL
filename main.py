@@ -28,6 +28,9 @@ class Slide(pi3d.Sprite):
         self.active = False
         self.fadeup = False
 
+        # Mask Slide
+        self.mask = Slide()
+
         # Scales
         self.sx = 1.0
         self.sy = 1.0
@@ -54,6 +57,43 @@ class Slide(pi3d.Sprite):
         self.rotateToZ(az)
 
 
+# class MetaSlide:
+#     def __init__(self):
+#         self.texslide = Slide()
+#         self.matslide = Slide()
+
+#         self.visible = False
+#         self.active = False
+#         self.fadeup = False
+
+#         # Scales
+#         self.sx = 1.0
+#         self.sy = 1.0
+#         self.sz = 1.0
+
+#         # Angle
+#         self.ax = 0.0
+#         self.ay = 0.0
+#         self.az = 0.0
+
+#     def set_scale(self, sx, sy, sz):
+#         self.sx = sx
+#         self.sy = sy
+#         self.sz = sz
+#         self.texslide.scale(sx, sy, sz)
+#         self.matslide.scale(sx, sy, sz)
+
+#     def set_angle(self, ax, ay, az):
+#         # set angle (absolute)
+#         self.ax = ax
+#         self.ay = ay
+#         self.az = az
+#         self.texsliderotateToX(ax)
+#         self.texsliderotateToY(ay)
+#         self.texsliderotateToZ(az)
+#         self.texsliderotateToX(ax)
+#         self.texsliderotateToY(ay)
+#         self.texsliderotateToZ(az)
 
 
 class Container:
@@ -61,7 +101,7 @@ class Container:
         self.parent = parent
         self.nSli = nSli # number of slides per container
         self.slides = [None]*self.nSli
-        self.matslides = [None]*self.nSli
+#        self.matslides = [None]*self.nSli
         for i in range(self.nSli):
             # Textured Slides
             self.slides[i] = Slide()
@@ -71,19 +111,17 @@ class Container:
             self.parent.fileQ.put(item)
 
 
-            # Material Slides
-            self.matslides[i] = Slide()
-
-            self.matslides[i].set_shader(self.parent.matsh)
-            self.matslides[i].set_material((1.0, 0.0, 0.0))
-            self.matslides[i].positionZ(0.85-(i/10))
+            # Mask Slides
+            self.slides[i].mask.set_shader(self.parent.matsh)
+            self.slides[i].mask.set_material((1.0, 0.0, 0.0))
+            self.slides[i].mask.positionZ(0.85-(i/10))
 
 
         self.focus = 0 # holds the index of the focused image
 #        self.focus_fi = 0 # the file index of the focused image
         self.slides[self.focus].visible = True
 #        self.slides[self.focus].fadeup = True
-        self.matslides[self.focus].visible = True
+#        self.matslides[self.focus].visible = True
 
     def draw(self):
         # slides have to be drawn back to front for transparency to work.
@@ -92,10 +130,10 @@ class Container:
         # of 'focused', if it is set to visible.  It will be in the back.
         for i in range(self.nSli):
             ix = (self.focus+i+1)%self.nSli
-            if self.matslides[ix].visible == True:
-                self.matslides[ix].set_scale(self.slides[ix].sx, self.slides[ix].sy, self.slides[ix].sz)
-                self.matslides[ix].draw()
-                print(ix)
+            # if self.matslides[ix].visible == True:
+            #     self.matslides[ix].set_scale(self.slides[ix].sx, self.slides[ix].sy, self.slides[ix].sz)
+            #     self.matslides[ix].draw()
+            #     print(ix)
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
 
@@ -161,10 +199,10 @@ class PytaVSL(object):
         if args[0] < self.ctnr.nSli:
             if args[1]:
                 self.ctnr.slides[args[0]].visible = True
-                self.ctnr.matslides[args[0]].visible = True
+#                self.ctnr.matslides[args[0]].visible = True
             else:
                 self.ctnr.slides[args[0]].visible = False     
-                self.ctnr.matslides[args[0]].visible = False
+#                self.ctnr.matslides[args[0]].visible = False
         else:
             print("OSC ARGS ERROR: Slide number out of range")        
 
