@@ -25,6 +25,7 @@ class Slide(pi3d.Sprite):
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
+        self.slide_infos = False
 
         # Scales
         self.sx = 1.0
@@ -90,8 +91,12 @@ class Container:
         self.focus = 0 # holds the index of the focused image
         self.slides[self.focus].visible = True
 
-    def slide_info(self, i):
-        self.slides[i].slide_infos = True
+    def slide_info(self, si):
+        for i in range(self.nSli):
+            if i != si:
+                self.slides[i].slide_infos = False
+            else:
+                self.slides[i].slide_infos = True
 
 
     def draw(self):
@@ -101,17 +106,18 @@ class Container:
         # of 'focused', if it is set to visible.  It will be in the back.
         for i in range(self.nSli):
             ix = (self.focus+i+1)%self.nSli
-            if self.slides[ix].visible == True:
-                if self.slides[ix].slide_infos == True:
-                    text = "--- SLIDE INFOS ---\nSlide Number: " + str(ix) + "\nPosition: \n    x: " + str(self.slides[ix].x()) + " y: " + str(self.slides[ix].y()) + " z: " + str(self.slides[ix].z()) + "\nScale:\n    sx: " + str(self.slides[ix].sx) + " sy: " + str(self.slides[ix].sy) + " sz: " + str(self.slides[ix].sz) + "\nAngle:\n    ax: " + str(self.slides[ix].ax) + " ay: " + str(self.slides[ix].ay) + " az: " + str(self.slides[ix].az)
-                    arialFont = pi3d.Font("../attempts/pi3d_demos/fonts/FreeMonoBoldOblique.ttf",  (255,255,255,255), add_codepoints=[256], background_color=(0, 0, 0, 100))        
-                    infostring = pi3d.String(font=arialFont, string=text, justify="l")
-                    infostring.position(0, 0, 0.19)
-                    infostring.set_shader(self.parent.shader)
-                    infostring.scale(200, 200, 1.0)        
-                    self.slides[ix].mask.draw()
-                    infostring.draw()
+            if self.slides[ix].slide_infos == True:
+                text = "--- SLIDE INFOS ---\nSlide Number: " + str(ix) + "\nPosition: \n    x: " + str(self.slides[ix].x()) + " y: " + str(self.slides[ix].y()) + " z: " + str(self.slides[ix].z()) + "\nScale:\n    sx: " + str(self.slides[ix].sx) + " sy: " + str(self.slides[ix].sy) + " sz: " + str(self.slides[ix].sz) + "\nAngle:\n    ax: " + str(self.slides[ix].ax) + " ay: " + str(self.slides[ix].ay) + " az: " + str(self.slides[ix].az) + "\nOpacity: " + str(self.slides[ix].alpha()) + "\nVisibility: " + str(self.slides[ix].visible)
+                arialFont = pi3d.Font("../attempts/pi3d_demos/fonts/FreeMonoBoldOblique.ttf",  (255,255,255,255), add_codepoints=[256], background_color=(0, 0, 0, 100))        
+                infostring = pi3d.String(font=arialFont, string=text, justify="l")
+                infostring.position(0, 0, 0.19)
+                infostring.set_shader(self.parent.shader)
+                infostring.scale(200, 200, 1.0)        
+                self.slides[ix].mask.draw()
+                infostring.draw()
+                self.slides[ix].set_alpha(0.5)
 
+            if self.slides[ix].visible == True:
                 self.slides[ix].draw()
 
 
@@ -275,6 +281,15 @@ class PytaVSL(object):
                 fexist = True
         if fexist == False:
             print(args[1] + ": no such file in the current list - please consider adding it with /pyta/add_file ,s [path to the file]")
+
+    @liblo.make_method('/pyta/slide/slide_info', 'ii')
+    def slide_info_cb(self, path, args):
+        if args[1]:
+            self.ctnr.slide_info(args[0])
+        else:
+            self.ctnr.slide_info(-1)
+
+
                 
     @liblo.make_method('/pyta/add_file', 's')
     def add_file_cb(self, path, args):
