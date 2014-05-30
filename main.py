@@ -61,7 +61,6 @@ class Container:
         self.parent = parent
         self.nSli = 8
         self.slides = [None]*self.nSli
-        half = 0
         for i in range(self.nSli):
             self.slides[i] = Slide()
 
@@ -70,9 +69,9 @@ class Container:
             self.parent.fileQ.put(item)
 
         self.focus = 0 # holds the index of the focused image
-        self.focus_fi = 0 # the file index of the focused image
+#        self.focus_fi = 0 # the file index of the focused image
         self.slides[self.focus].visible = True
-        self.slides[self.focus].fadeup = True
+#        self.slides[self.focus].fadeup = True
 
     def draw(self):
         # slides have to be drawn back to front for transparency to work.
@@ -84,18 +83,13 @@ class Container:
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
             
-    def posit(self):
-        self.slides[self.focus].translate(random.random()*20-5, random.random()*20-5, 0.0)
 
-    def other(self):
-        self.slides[self.focus].visible = False
-        self.focus = (self.focus+int(10*random.random()))%self.nSli
-        self.slides[self.focus].visible = True
-
-
-class pytaVSL(object):
+class PytaVSL(object):
     def __init__(self, port=56418):
+        # setup OSC
         self.port = port
+
+        # setup OpenGL
         self.DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
         self.shader = pi3d.Shader("uv_flat")
         self.CAMERA = pi3d.Camera(is_3d=False)
@@ -110,7 +104,6 @@ class pytaVSL(object):
 
         # Slides per container
         self.ctnr.nSli = 8
-        self.alpha_step=0.025
 
     def on_start(self):
         if self.port is not None:
@@ -258,9 +251,12 @@ class pytaVSL(object):
         else:
             print("ERREUR: " + args[0] + ": no such file or directory")
 
+
+
+
 ########## MAIN APP ##########
 
-pyta = pytaVSL()
+pyta = PytaVSL()
 pyta.on_start()
 
 t = threading.Thread(target=pyta.tex_load)
