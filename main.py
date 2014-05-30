@@ -26,9 +26,6 @@ class Slide(pi3d.Sprite):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
 
-        # Mask Slide
-        self.mask = pi3d.Sprite()
-
         # Scales
         self.sx = 1.0
         self.sy = 1.0
@@ -38,6 +35,17 @@ class Slide(pi3d.Sprite):
         self.ax = 0.0
         self.ay = 0.0
         self.az = 0.0
+
+        # Mask Slide
+        self.mask = pi3d.Sprite()
+
+    def set_position(self, x, y, z):
+        self.position(x, y, z)
+        self.mask.position(x, y, z+0.1)
+
+    def set_translation(self, dx, dy, dz):
+        self.translate(dx, dy, dz)
+        self.mask.translate(dx, dy, dz)
 
     def set_scale(self, sx, sy, sz):
         self.sx = sx
@@ -116,7 +124,7 @@ class Container:
             # Mask Slides
             self.slides[i].mask.set_shader(self.parent.matsh)
             self.slides[i].mask.set_material((1.0, 0.0, 0.0))
-            self.slides[i].mask.positionZ(0.85-(i/10))
+            self.slides[i].mask.positionZ(0.81-(i/10))
 
 
         self.focus = 0 # holds the index of the focused image
@@ -223,13 +231,13 @@ class PytaVSL(object):
     def slide_position_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if path == "/pyta/slide/position":
-                self.ctnr.slides[args[0]].position(args[1], args[2], args[3])
+                self.ctnr.slides[args[0]].set_position(args[1], args[2], args[3])
             elif path == "/pyta/slide/position_x":
-                self.ctnr.slides[args[0]].position(args[1], self.ctnr.slides[args[0]].y(), self.ctnr.slides[args[0]].z())
+                self.ctnr.slides[args[0]].set_position(args[1], self.ctnr.slides[args[0]].y(), self.ctnr.slides[args[0]].z())
             elif path == "/pyta/slide/position_y":
-                self.ctnr.slides[args[0]].position(self.ctnr.slides[args[0]].x(), args[1], self.ctnr.slides[args[0]].z())
+                self.ctnr.slides[args[0]].set_position(self.ctnr.slides[args[0]].x(), args[1], self.ctnr.slides[args[0]].z())
             elif path == "/pyta/slide/position_z":
-                self.ctnr.slides[args[0]].position(self.ctnr.slides[args[0]].x(), self.ctnr.slides[args[0]].y(), args[1])
+                self.ctnr.slides[args[0]].set_position(self.ctnr.slides[args[0]].x(), self.ctnr.slides[args[0]].y(), args[1])
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
@@ -240,13 +248,13 @@ class PytaVSL(object):
     def slide_translate_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if path == "/pyta/slide/translate":
-                self.ctnr.slides[args[0]].translate(args[1], args[2], args[3])
+                self.ctnr.slides[args[0]].set_translation(args[1], args[2], args[3])
             elif path == "/pyta/slide/translate_x":
-                self.ctnr.slides[args[0]].translate(args[1], 0.0, 0.0)
+                self.ctnr.slides[args[0]].set_translation(args[1], 0.0, 0.0)
             elif path == "/pyta/slide/translate_y":
-                self.ctnr.slides[args[0]].translate(0.0, args[1], 0.0)
+                self.ctnr.slides[args[0]].set_translation(0.0, args[1], 0.0)
             elif path == "/pyta/slide/translate_z":
-                self.ctnr.slides[args[0]].translate(0.0, 0.0, args[1])   
+                self.ctnr.slides[args[0]].set_translation(0.0, 0.0, args[1])   
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
