@@ -39,6 +39,7 @@ class Slide(pi3d.Sprite):
 
         # Mask Slide
         self.mask = pi3d.Sprite()
+        self.mask_on = False
 
 
     def set_position(self, x, y, z):
@@ -54,7 +55,8 @@ class Slide(pi3d.Sprite):
         self.sy = sy
         self.sz = sz
         self.scale(sx, sy, sz)
-        self.mask.scale(sx, sy, sz)
+        if self.mask_on:
+            self.mask.scale(sx, sy, sz)
 
     def set_angle(self, ax, ay, az):
         # set angle (absolute)
@@ -64,9 +66,10 @@ class Slide(pi3d.Sprite):
         self.rotateToX(ax)
         self.rotateToY(ay)
         self.rotateToZ(az)
-        self.mask.rotateToX(ax)
-        self.mask.rotateToY(ay)
-        self.mask.rotateToZ(az)
+        if self.mask_on:
+            self.mask.rotateToX(ax)
+            self.mask.rotateToY(ay)
+            self.mask.rotateToZ(az)
 
 
 class Container:
@@ -119,6 +122,8 @@ class Container:
 
             if self.slides[ix].visible == True:
                 self.slides[ix].draw()
+                if self.slides[ix].mask_on:
+                    self.slides[ix].mask.draw()
 
 
 
