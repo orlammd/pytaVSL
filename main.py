@@ -205,9 +205,9 @@ class PytaVSL(object):
                 slide = self.ctnr.slides[args[0]]
                 slide.mask.position(slide.x(), slide.y(), slide.z()+0.1)
                 slide.mask.scale(slide.sx, slide.sy, slide.sz)
-                slide.mask.rotateX(slide.ax)
-                slide.mask.rotateY(slide.ay)
-                slide.mask.rotateZ(slide.az)
+                slide.mask.rotateToX(slide.ax)
+                slide.mask.rotateToY(slide.ay)
+                slide.mask.rotateToZ(slide.az)
                 slide.mask_on = True
             else:
                 self.ctnr.slides[args[0]].mask_on = False     
