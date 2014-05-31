@@ -121,9 +121,10 @@ class Container:
                 self.slides[ix].set_alpha(0.5)
 
             if self.slides[ix].visible == True:
-                self.slides[ix].draw()
                 if self.slides[ix].mask_on:
                     self.slides[ix].mask.draw()
+                self.slides[ix].draw()
+
 
 
 
@@ -194,6 +195,22 @@ class PytaVSL(object):
                 self.ctnr.slides[args[0]].visible = True
             else:
                 self.ctnr.slides[args[0]].visible = False     
+        else:
+            print("OSC ARGS ERROR: Slide number out of range")        
+
+    @liblo.make_method('/pyta/slide/mask_on', 'ii')
+    def slide_mask_on_cb(self, path, args):
+        if args[0] < self.ctnr.nSli:
+            if args[1]:
+                slide = self.ctnr.slides[args[0]]
+                slide.mask.position(slide.x(), slide.y(), slide.z()+0.1)
+                slide.mask.scale(slide.sx, slide.sy, slide.sz)
+                slide.mask.rotateX(slide.ax)
+                slide.mask.rotateY(slide.ay)
+                slide.mask.rotateZ(slide.az)
+                slide.mask_on = True
+            else:
+                self.ctnr.slides[args[0]].mask_on = False     
         else:
             print("OSC ARGS ERROR: Slide number out of range")        
 
