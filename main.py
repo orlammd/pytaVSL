@@ -26,6 +26,7 @@ class Slide(pi3d.Sprite):
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
+        self.creation = True
 
         # Scales
         self.sx = 1.0
@@ -154,15 +155,17 @@ class PytaVSL(object):
             fname = item[0]
             slide = item[1]
             tex = pi3d.Texture(item[0], blend=True, mipmap=True)
-            xrat = self.DISPLAY.width/tex.ix
-            yrat = self.DISPLAY.height/tex.iy
-            if yrat < xrat:
-                xrat = yrat
-            wi, hi = tex.ix * xrat, tex.iy * xrat
+            if slide.creation:
+                xrat = self.DISPLAY.width/tex.ix
+                yrat = self.DISPLAY.height/tex.iy
+                if yrat < xrat:
+                    xrat = yrat
+                wi, hi = tex.ix * xrat, tex.iy * xrat
+                slide.set_scale(wi, hi, 1.0) 
 
             slide.set_draw_details(self.shader,[tex])
-            #slide.set_scale(wi, hi, 1.0) 
             self.fileQ.task_done()
+            slide.creation = False
 
     def destroy(self):
         self.DISPLAY.destroy()
@@ -276,9 +279,13 @@ class PytaVSL(object):
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
-
+    @liblo.make_method('/pyta/slide/load_file', 'iss')
     @liblo.make_method('/pyta/slide/load_file', 'is')
     def slide_load_file_cb(self, path, args):
+        if len(args) == 3: # Auto-scaling disabled
+            self.ctnr.slides[args[0]].creation = False
+        else:
+            self.ctnr.slides[args[0]].creation = True
         if self.ctnr.slides[args[0]].visible:
             print("WARNING: you're loading a file in a potentially visible slide - loading takes a bit of time, the effect might not render immediately")
         fexist = False
@@ -312,7 +319,7 @@ class PytaVSL(object):
 	prefix = '/pyta/slide/'
         filename = 's' + str(args[0]) + '.' + args[1] + '.state'
 	print('Write in progress in ' + filename)
-        print('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + "\n")
+        print('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + " NoCreation \n")
         print('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
         print('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
         print('send_osc ' + str(self.port) + ' ' + prefix + 'rotate ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
@@ -320,7 +327,7 @@ class PytaVSL(object):
  
         statef = open(filename, 'w')
         statef.write("#!/bin/bash\n")
-        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + "\n")
+        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + " NoCreation \n")
         statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
         statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
         statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
