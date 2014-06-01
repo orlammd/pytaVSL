@@ -295,7 +295,7 @@ class PytaVSL(object):
 
     @liblo.make_method('/pyta/slide/slide_info', 'ii')
     def slide_info_cb(self, path, args, types, src):
-	slide = self.ctnr.slides[args[0]
+	slide = self.ctnr.slides[args[0]]
         liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/slidenumber', args[0])
         liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/position', slide.x(), slide.y(), slide.z())
         liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/scale', slide.sx, slide.sy, slide.sz)
