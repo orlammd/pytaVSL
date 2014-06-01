@@ -293,7 +293,7 @@ class PytaVSL(object):
         liblo.send(dest, prefix + 'position', slide.x(), slide.y(), slide.z())
         liblo.send(dest, prefix + 'scale', slide.sx, slide.sy, slide.sz)
         liblo.send(dest, prefix + 'angle', slide.ax, slide.ay, slide.az)
-        liblo.send(dest, prefix + 'visbility', slide.visibility)
+        liblo.send(dest, prefix + 'visible', slide.visible)
         liblo.send(dest, prefix + 'alpha', slide.alpha)
                 
     @liblo.make_method('/pyta/add_file', 's')
