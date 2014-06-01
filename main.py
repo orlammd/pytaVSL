@@ -292,7 +292,6 @@ class PytaVSL(object):
             print("WARNING: you're loading a file in a potentially visible slide - loading takes a bit of time, the effect might not render immediately")
         fexist = False
         for i in range(self.nFi):
-            print(str(self.iFiles[i]))
             if args[1] == str(self.iFiles[i]):
                 self.ctnr.items[args[0]] = [self.iFiles[i%self.nFi], self.ctnr.slides[args[0]]]
                 self.fileQ.put(self.ctnr.items[args[0]])
@@ -324,29 +323,31 @@ class PytaVSL(object):
  
         statef = open(filename, 'w')
         statef.write("slide " + str(args[0]) + "\n") 
-        statef.write("file " + str(self.ctnr.items[args[0]][0]) + "\n") #'send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + " NoCreation \n")
-        statef.write("position " + str(slide.x()) + " " + str(slide.y()) + " " + str(slide.z()) + "\n") #'send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
-        statef.write("scale " + str(slide.sx) + " " + str(slide.sy) + " " + str(slide.sy) + "\n")  #'send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
-        statef.write("angle " + str(slide.ax) + " " + str(slide.ay) + " " + str(slide.az) + "\n") #'send_osc ' + str(self.port) + ' ' + prefix + 'rotate ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
-        statef.write("alpha " + str(slide.alpha()) + "\n") #'send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()) + "\n")
+        statef.write("file " + str(self.ctnr.items[args[0]][0]) + "\n") 
+        statef.write("position " + str(slide.x()) + " " + str(slide.y()) + " " + str(slide.z()) + "\n")
+        statef.write("scale " + str(slide.sx) + " " + str(slide.sy) + " " + str(slide.sy) + "\n")  
+        statef.write("angle " + str(slide.ax) + " " + str(slide.ay) + " " + str(slide.az) + "\n") 
+        statef.write("alpha " + str(slide.alpha()) + "\n") 
         statef.close()
 
     @liblo.make_method('/pyta/slide/load_state', 's')
     def slide_load_state(self, path, args):
-        statef = open(filename, 'r')
+        statef = open(args[0], 'r')
         param = statef.read()
-        sn = param.split("\n")[0].split(" ").[1]
-        fn = param.split("\n")[1].split(" ").[1]
-        pos = param.split("\n")[2].split(" ").[1:]
-        sc = param.split("\n")[3].split(" ").[1:]
-        ag = param.split("\n")[4].split(" ").[1:]
-        al = param.split("\n")[5].split(" ").[1]
+        sn = int(param.split("\n")[0].split(" ")[1])
+        fn = param.split("\n")[1].split(" ")[1]
+        pos = param.split("\n")[2].split(" ")[1:]
+        sc = param.split("\n")[3].split(" ")[1:]
+        ag = param.split("\n")[4].split(" ")[1:]
+        al = float(param.split("\n")[5].split(" ")[1])
+
+#        print(str(sn) + " " + str(fn) + " " + str(pos) + " " + str(sc) + " " + str(ag) + " " + str(al))
 
         slide = self.ctnr.slides[sn]
-        self.slide_load_file_cb('/hop', sn, fn)
-        slide.position(pos[1], pos[2], pos[3])
-        slide.set_scale(sc[1], sc[2], sc[3])
-        slide.set_angle(ag[1], ag[2], ag[3])
+        self.slide_load_file_cb('/hop', (sn, fn, "NoCreation"))
+        slide.position(float(pos[0]), float(pos[1]), float(pos[2]))
+        slide.set_scale(float(sc[0]), float(sc[1]), float(sc[2]))
+        slide.set_angle(float(ag[0]), float(ag[1]), float(ag[2]))
         slide.set_alpha(al)
 
 

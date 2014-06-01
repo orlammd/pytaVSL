@@ -1,6 +1,6 @@
-#!/bin/bash
-send_osc 56418 /pyta/slide/load_file  7 pix/TheNotsAwfulGeminos.png NoCreation 
-send_osc 56418 /pyta/slide/position  7 10.0 -140.0 0.449999988079
-send_osc 56418 /pyta/slide/scale  7 409.600025558 307.200019169 1.0
-send_osc 56418 /pyta/slide/rotate  7 0.0 0.0 0.0
-send_osc 56418 /pyta/slide/alpha  7 0.0
+slide 7
+file pix/TheNotsAwfulGeminos.png 
+position 10.0 -140.0 0.449999988079
+scale 409.600025558 307.200019169 1.0
+angle 0.0 0.0 0.0
+alpha 0.0

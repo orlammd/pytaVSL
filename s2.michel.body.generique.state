@@ -1,6 +1,6 @@
-#!/bin/bash
-send_osc 56418 /pyta/slide/load_file  2 pix/michel_body.png NoCreation 
-send_osc 56418 /pyta/slide/position  2 740.0 -180.0 0.600000023842
-send_osc 56418 /pyta/slide/scale  2 119.819999695 384.0 1.0
-send_osc 56418 /pyta/slide/rotate  2 0.0 0.0 0.0
-send_osc 56418 /pyta/slide/alpha  2 1.0
+slide 2
+file pix/michel_body.png 
+position740.0 -180.0 0.600000023842
+scale 119.819999695 384.0 1.0
+angle 0.0 0.0 0.0
+alpha 1.0
