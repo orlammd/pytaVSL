@@ -330,7 +330,7 @@ class PytaVSL(object):
         statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + " NoCreation \n")
         statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
         statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
-        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
+        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'rotate ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
         statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()) + "\n")
         statef.close()
 

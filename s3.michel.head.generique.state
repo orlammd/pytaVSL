@@ -2,5 +2,5 @@
 send_osc 56418 /pyta/slide/load_file  3 pix/michel_head.png NoCreation 
 send_osc 56418 /pyta/slide/position  3 -5.0 25.0 0.5
 send_osc 56418 /pyta/slide/scale  3 220.910003662 153.600006104 1.0
-send_osc 56418 /pyta/slide/angle  3 0.0 0.0 20.0
+send_osc 56418 /pyta/slide/rotate  3 0.0 0.0 20.0
 send_osc 56418 /pyta/slide/alpha  3 1.0
