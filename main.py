@@ -94,7 +94,7 @@ class Container:
             self.slides[i].mask.positionZ(0.81-(i/10))
 
         self.focus = 0 # holds the index of the focused image
-        self.slides[self.focus].visible = True
+#        self.slides[self.focus].visible = True
 
     def draw(self):
         # slides have to be drawn back to front for transparency to work.
@@ -321,24 +321,33 @@ class PytaVSL(object):
 	prefix = '/pyta/slide/'
         filename = 's' + str(args[0]) + '.' + args[1] + '.state'
 	print('Write in progress in ' + filename)
-        print('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + " NoCreation \n")
-        print('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
-        print('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
-        print('send_osc ' + str(self.port) + ' ' + prefix + 'rotate ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
-        print('send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()))
  
         statef = open(filename, 'w')
-        statef.write("#!/bin/bash\n")
-        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + " NoCreation \n")
-        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
-        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
-        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'rotate ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
-        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()) + "\n")
+        statef.write("slide " + str(args[0]) + "\n") 
+        statef.write("file " + str(self.ctnr.items[args[0]][0]) + "\n") #'send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + " NoCreation \n")
+        statef.write("position " + str(slide.x()) + " " + str(slide.y()) + " " + str(slide.z()) + "\n") #'send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
+        statef.write("scale " + str(slide.sx) + " " + str(slide.sy) + " " + str(slide.sy) + "\n")  #'send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
+        statef.write("angle " + str(slide.ax) + " " + str(slide.ay) + " " + str(slide.az) + "\n") #'send_osc ' + str(self.port) + ' ' + prefix + 'rotate ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
+        statef.write("alpha " + str(slide.alpha()) + "\n") #'send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()) + "\n")
         statef.close()
 
     @liblo.make_method('/pyta/slide/load_state', 's')
     def slide_load_state(self, path, args):
-        os.system('sh ' + args[0])
+        statef = open(filename, 'r')
+        param = statef.read()
+        sn = param.split("\n")[0].split(" ").[1]
+        fn = param.split("\n")[1].split(" ").[1]
+        pos = param.split("\n")[2].split(" ").[1:]
+        sc = param.split("\n")[3].split(" ").[1:]
+        ag = param.split("\n")[4].split(" ").[1:]
+        al = param.split("\n")[5].split(" ").[1]
+
+        slide = self.ctnr.slides[sn]
+        self.slide_load_file_cb('/hop', sn, fn)
+        slide.position(pos[1], pos[2], pos[3])
+        slide.set_scale(sc[1], sc[2], sc[3])
+        slide.set_angle(ag[1], ag[2], ag[3])
+        slide.set_alpha(al)
 
 
     @liblo.make_method('/pyta/add_file', 's')
