@@ -239,6 +239,8 @@ class PytaVSL(object):
     @liblo.make_method('/pyta/slide/scale_x', 'if')
     @liblo.make_method('/pyta/slide/scale_y', 'if')
     @liblo.make_method('/pyta/slide/scale_z', 'if')
+    @liblo.make_method('/pyta/slide/relative_scale_xy', 'if')
+    @liblo.make_method('/pyta/slide/rsxy', 'if')
     def slide_scale_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if path == "/pyta/slide/scale":
@@ -249,6 +251,9 @@ class PytaVSL(object):
                 self.ctnr.slides[args[0]].set_scale(self.ctnr.slides[args[0]].sx, args[1], self.ctnr.slides[args[0]].sz)
             elif path == "/pyta/slide/scale_z":
                 self.ctnr.slides[args[0]].set_scale(self.ctnr.slides[args[0]].sx, self.ctnr.slides[args[0]].sy, args[1])
+            elif path == "/pyta/slide/relative_scale_xy" or path == "/pyta/slide/rsxy":
+                self.ctnr.slides[args[0]].set_scale(self.ctnr.slides[args[0]].sx*args[1], self.ctnr.slides[args[0]].sy*args[1], self.ctnr.slides[args[0]].sz)
+
         else:
             print("OSC ARGS ERROR: Slide number out of range")
 
