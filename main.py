@@ -25,7 +25,6 @@ class Slide(pi3d.Sprite):
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
-        self.slide_infos = False
 
         # Scales
         self.sx = 1.0
@@ -93,14 +92,6 @@ class Container:
 
         self.focus = 0 # holds the index of the focused image
         self.slides[self.focus].visible = True
-
-    def slide_info(self, si):
-        for i in range(self.nSli):
-            if i != si:
-                self.slides[i].slide_infos = False
-            else:
-                self.slides[i].slide_infos = True
-
 
     def draw(self):
         # slides have to be drawn back to front for transparency to work.
@@ -296,6 +287,7 @@ class PytaVSL(object):
     @liblo.make_method('/pyta/slide/slide_info', 'ii')
     def slide_info_cb(self, path, args, types, src):
 	slide = self.ctnr.slides[args[0]]
+	print("src: " + src)
         liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/slidenumber', args[0])
         liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/position', slide.x(), slide.y(), slide.z())
         liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/scale', slide.sx, slide.sy, slide.sz)
