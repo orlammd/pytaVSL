@@ -282,13 +282,16 @@ class PytaVSL(object):
             print("WARNING: you're loading a file in a potentially visible slide - loading takes a bit of time, the effect might not render immediately")
         fexist = False
         for i in range(self.nFi):
-            if args[1] == self.iFiles[i]:
-                self.ctnr.items[args[0]] = [self.parent.iFiles[i%self.parent.nFi], self.slides[args[0]]]
+            print(str(self.iFiles[i]))
+            if args[1] == str(self.iFiles[i]):
+                self.ctnr.items[args[0]] = [self.iFiles[i%self.nFi], self.ctnr.slides[args[0]]]
                 self.fileQ.put(self.ctnr.items[args[0]])
                 print("loading file " + args[1] + " in slide " + str(args[0]))
                 fexist = True
         if fexist == False:
             print(args[1] + ": no such file in the current list - please consider adding it with /pyta/add_file ,s [path to the file]")
+            print("Current list of files:")
+            print(self.iFiles)
 
     @liblo.make_method('/pyta/slide/slide_info', 'ii')
     def slide_info_cb(self, path, args, types, src):
@@ -306,7 +309,7 @@ class PytaVSL(object):
     def slide_save_state(self, path, args):
 	slide = self.ctnr.slides[args[0]]
 	prefix = '/pyta/slide/'
-	print('Write in progress in ' ° args[1] + '.state')
+	print('Write in progress in ' + args[1] + '.state')
         print('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]))
         print('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()))
         print('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz))
