@@ -76,13 +76,14 @@ class Container:
         self.parent = parent
         self.nSli = nSli # number of slides per container
         self.slides = [None]*self.nSli
+        self.items = {}
         for i in range(self.nSli):
             # Textured Slides
             self.slides[i] = Slide()
 
             self.slides[i].positionZ(0.8-(i/10))
-            item = [self.parent.iFiles[i%self.parent.nFi], self.slides[i]]
-            self.parent.fileQ.put(item)
+            self.items[i] = [self.parent.iFiles[i%self.parent.nFi], self.slides[i]]
+            self.parent.fileQ.put(self.items[i])
 
 
             # Mask Slides
@@ -282,9 +283,9 @@ class PytaVSL(object):
         fexist = False
         for i in range(self.nFi):
             if args[1] == self.iFiles[i]:
-                item = [self.iFiles[i], self.ctnr.slides[args[0]]]
-                self.fileQ.put(item)
-                print("loading file " + args[1])
+                self.ctnr.items[args[0]] = [self.parent.iFiles[i%self.parent.nFi], self.slides[args[0]]]
+                self.fileQ.put(self.ctnr.items[args[0]])
+                print("loading file " + args[1] + " in slide " + str(args[0]))
                 fexist = True
         if fexist == False:
             print(args[1] + ": no such file in the current list - please consider adding it with /pyta/add_file ,s [path to the file]")
@@ -294,14 +295,24 @@ class PytaVSL(object):
 	slide = self.ctnr.slides[args[0]]
 	dest = src.get_url().split(":")[0] + ':' + src.get_url().split(":")[1] + ':' + str(args[1])
 	prefix = '/pyta/slide_info/'
-	print(dest)
         liblo.send(dest, prefix + 'slidenumber', args[0])
         liblo.send(dest, prefix + 'position', slide.x(), slide.y(), slide.z())
         liblo.send(dest, prefix + 'scale', slide.sx, slide.sy, slide.sz)
         liblo.send(dest, prefix + 'angle', slide.ax, slide.ay, slide.az)
         liblo.send(dest, prefix + 'visible', slide.visible)
         liblo.send(dest, prefix + 'alpha', slide.alpha())
-                
+    
+    @liblo.make_method('/pyta/slide/save_state', 'is')
+    def slide_save_state(self, path, args):
+	slide = self.ctnr.slides[args[0]]
+	prefix = '/pyta/slide/'
+#        statef = open(args[1], 'w')
+#        statef.write('send_osc ' +  + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()))
+#        statef.write('send_osc ' + dest + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz))
+#        statef.write('send_osc ' + dest + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az))
+#        statef.write('send_osc ' + dest + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()))
+        print(self.fileQ.get())
+            
     @liblo.make_method('/pyta/add_file', 's')
     def add_file_cb(self, path, args):
         if os.path.exists(args[0]):
