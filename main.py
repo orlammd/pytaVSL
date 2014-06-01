@@ -109,17 +109,6 @@ class Container:
         # of 'focused', if it is set to visible.  It will be in the back.
         for i in range(self.nSli):
             ix = (self.focus+i+1)%self.nSli
-            if self.slides[ix].slide_infos == True:
-                text = "--- SLIDE INFOS ---\nSlide Number: " + str(ix) + "\nPosition: \n    x: " + str(self.slides[ix].x()) + " y: " + str(self.slides[ix].y()) + " z: " + str(self.slides[ix].z()) + "\nScale:\n    sx: " + str(self.slides[ix].sx) + " sy: " + str(self.slides[ix].sy) + " sz: " + str(self.slides[ix].sz) + "\nAngle:\n    ax: " + str(self.slides[ix].ax) + " ay: " + str(self.slides[ix].ay) + " az: " + str(self.slides[ix].az) + "\nOpacity: " + str(self.slides[ix].alpha()) + "\nVisibility: " + str(self.slides[ix].visible)
-                arialFont = pi3d.Font("../attempts/pi3d_demos/fonts/FreeMonoBoldOblique.ttf",  (255,255,255,255), add_codepoints=[256], background_color=(0, 0, 0, 100))        
-                infostring = pi3d.String(font=arialFont, string=text, justify="l")
-                infostring.position(0, 0, 0.19)
-                infostring.set_shader(self.parent.shader)
-                infostring.scale(200, 200, 1.0)        
-                self.slides[ix].mask.draw()
-                infostring.draw()
-                self.slides[ix].set_alpha(0.5)
-
             if self.slides[ix].visible == True:
                 if self.slides[ix].mask_on:
                     self.slides[ix].mask.draw()
@@ -305,13 +294,14 @@ class PytaVSL(object):
             print(args[1] + ": no such file in the current list - please consider adding it with /pyta/add_file ,s [path to the file]")
 
     @liblo.make_method('/pyta/slide/slide_info', 'ii')
-    def slide_info_cb(self, path, args):
-        if args[1]:
-            self.ctnr.slide_info(args[0])
-        else:
-            self.ctnr.slide_info(-1)
-
-
+    def slide_info_cb(self, path, args, types, src):
+	slide = self.ctnr.slides[args[0]
+        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/slidenumber', args[0])
+        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/position', slide.x(), slide.y(), slide.z())
+        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/scale', slide.sx, slide.sy, slide.sz)
+        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/angle', slide.ax, slide.ay, slide.az)
+        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/visbility', slide.visibility)
+        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/alpha', slide.alpha)
                 
     @liblo.make_method('/pyta/add_file', 's')
     def add_file_cb(self, path, args):
