@@ -14,6 +14,7 @@ import pi3d
 import liblo
 import random
 import os.path
+import os
 
 from six.moves import queue
 
@@ -160,7 +161,7 @@ class PytaVSL(object):
             wi, hi = tex.ix * xrat, tex.iy * xrat
 
             slide.set_draw_details(self.shader,[tex])
-            slide.set_scale(wi, hi, 1.0) 
+            #slide.set_scale(wi, hi, 1.0) 
             self.fileQ.task_done()
 
     def destroy(self):
@@ -309,21 +310,27 @@ class PytaVSL(object):
     def slide_save_state(self, path, args):
 	slide = self.ctnr.slides[args[0]]
 	prefix = '/pyta/slide/'
-	print('Write in progress in ' + args[1] + '.state')
-        print('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]))
-        print('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()))
-        print('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz))
-        print('send_osc ' + str(self.port) + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az))
+        filename = 's' + str(args[0]) + '.' + args[1] + '.state'
+	print('Write in progress in ' + filename)
+        print('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + "\n")
+        print('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
+        print('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
+        print('send_osc ' + str(self.port) + ' ' + prefix + 'rotate ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
         print('send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()))
  
-        statef = open(args[1] + '.state', 'w')
-        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]))
-        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()))
-        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz))
-        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az))
-        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()))
+        statef = open(filename, 'w')
+        statef.write("#!/bin/bash\n")
+        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]) + "\n")
+        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()) + "\n")
+        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz) + "\n")
+        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az) + "\n")
+        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()) + "\n")
         statef.close()
-          
+
+    @liblo.make_method('/pyta/slide/load_state', 's')
+    def slide_load_state(self, path, args):
+        os.system('sh ' + args[0])
+
 
     @liblo.make_method('/pyta/add_file', 's')
     def add_file_cb(self, path, args):
