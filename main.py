@@ -306,13 +306,22 @@ class PytaVSL(object):
     def slide_save_state(self, path, args):
 	slide = self.ctnr.slides[args[0]]
 	prefix = '/pyta/slide/'
-#        statef = open(args[1], 'w')
-#        statef.write('send_osc ' +  + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()))
-#        statef.write('send_osc ' + dest + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz))
-#        statef.write('send_osc ' + dest + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az))
-#        statef.write('send_osc ' + dest + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()))
-        print(self.fileQ.get())
-            
+	print('Write in progress in ' ° args[1] + '.state')
+        print('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]))
+        print('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()))
+        print('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz))
+        print('send_osc ' + str(self.port) + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az))
+        print('send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()))
+ 
+        statef = open(args[1] + '.state', 'w')
+        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'load_file ' + ' ' + str(args[0]) + ' ' + str(self.ctnr.items[args[0]][0]))
+        statef.write('send_osc ' +  str(self.port) + ' ' + prefix + 'position ' + ' ' + str(args[0]) + ' ' + str(slide.x()) + ' ' + str(slide.y()) + ' ' + str(slide.z()))
+        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'scale ' + ' ' + str(args[0]) + ' ' + str(slide.sx) + ' ' + str(slide.sy) + ' ' + str(slide.sz))
+        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'angle ' + ' ' + str(args[0]) + ' ' + str(slide.ax) + ' ' + str(slide.ay) + ' ' + str(slide.az))
+        statef.write('send_osc ' + str(self.port) + ' ' + prefix + 'alpha ' + ' ' + str(args[0]) + ' ' + str(slide.alpha()))
+        statef.close()
+          
+
     @liblo.make_method('/pyta/add_file', 's')
     def add_file_cb(self, path, args):
         if os.path.exists(args[0]):
@@ -353,7 +362,6 @@ while pyta.DISPLAY.loop_running():
             mykeys.close()
             pyta.DISPLAY.stop()
             break
-        #         if k == 115: #S
         #             ctnr.posit()
         #         else:
         #             ctnr.join()
