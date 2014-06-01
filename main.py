@@ -287,13 +287,14 @@ class PytaVSL(object):
     @liblo.make_method('/pyta/slide/slide_info', 'ii')
     def slide_info_cb(self, path, args, types, src):
 	slide = self.ctnr.slides[args[0]]
-	print("src: " + src)
-        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/slidenumber', args[0])
-        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/position', slide.x(), slide.y(), slide.z())
-        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/scale', slide.sx, slide.sy, slide.sz)
-        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/angle', slide.ax, slide.ay, slide.az)
-        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/visbility', slide.visibility)
-        liblo.send('osc.udp://' + src + ":" + str(args[1]), '/pytaVSL/info/alpha', slide.alpha)
+	dest = src.get_url() + ':' + str(args[1])
+	prefix = '/pyta/slide_info/'
+        liblo.send(dest, prefix + 'slidenumber', args[0])
+        liblo.send(dest, prefix + 'position', slide.x(), slide.y(), slide.z())
+        liblo.send(dest, prefix + 'scale', slide.sx, slide.sy, slide.sz)
+        liblo.send(dest, prefix + 'angle', slide.ax, slide.ay, slide.az)
+        liblo.send(dest, prefix + 'visbility', slide.visibility)
+        liblo.send(dest, prefix + 'alpha', slide.alpha)
                 
     @liblo.make_method('/pyta/add_file', 's')
     def add_file_cb(self, path, args):
