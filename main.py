@@ -83,7 +83,7 @@ class Container:
             # Textured Slides
             self.slides[i] = Slide()
 
-            self.slides[i].positionZ(0.8-(i/10))
+            self.slides[i].positionZ(0.8-(i/20))
             self.items[i] = [self.parent.iFiles[i%self.parent.nFi], self.slides[i]]
             self.parent.fileQ.put(self.items[i])
 
@@ -131,7 +131,8 @@ class PytaVSL(object):
         self.fileQ = queue.Queue()
 
         # Containers
-        self.ctnr = Container(parent=self, nSli=8)
+        self.ctnr = Container(parent=self, nSli=16)
+
 
 
     def on_start(self):
@@ -175,6 +176,7 @@ class PytaVSL(object):
     # OSC Methods
     @liblo.make_method('/pyta/slide/visible', 'ii')
     def slide_visible_cb(self, path, args):
+        print(args[0])
         if args[0] < self.ctnr.nSli:
             if args[1]:
                 self.ctnr.slides[args[0]].visible = True
