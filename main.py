@@ -193,11 +193,7 @@ class Container:
                     self.slides[ix].mask.draw()
                 self.slides[ix].draw()
 
-
-
-
-
-            
+           
 
 class PytaVSL(object):
     '''
@@ -436,8 +432,6 @@ class PytaVSL(object):
         ag = param.split("\n")[4].split(" ")[1:]
         al = float(param.split("\n")[5].split(" ")[1])
 
-#        print(str(sn) + " " + str(fn) + " " + str(pos) + " " + str(sc) + " " + str(ag) + " " + str(al))
-
         slide = self.ctnr.slides[sn]
         self.slide_load_file_cb('/hop', (sn, fn, "NoCreation"))
         slide.position(float(pos[0]), float(pos[1]), float(pos[2]))
@@ -447,8 +441,7 @@ class PytaVSL(object):
 
     @liblo.make_method('/pyta/rgb', 'fff')
     def slide_enlighten(self, path, args):
-        self.light.ambient((args[0], args[1], args[2]))
-        print(args)
+        self.ctnr.slides[0].set_light(args[0], args[1], args[2])
 
 
     @liblo.make_method('/pyta/add_file', 's')
