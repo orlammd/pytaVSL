@@ -212,7 +212,8 @@ class PytaVSL(object):
         self.shader = pi3d.Shader("uv_light")
         self.matsh = pi3d.Shader("mat_light")
         self.CAMERA = pi3d.Camera(is_3d=False)
-        self.light = pi3d.Light(lightpos=(1, 1, -3), lightamb=(1, 1, 1))
+        self.light = pi3d.Light(lightpos=(1, 1, -3))
+        self.light.ambient((1, 1, 1))
 
         # Loading files in the queue
         self.iFiles = glob.glob("pix/*.*")
@@ -447,6 +448,7 @@ class PytaVSL(object):
     @liblo.make_method('/pyta/rgb', 'fff')
     def slide_enlighten(self, path, args):
         self.light.ambient((args[0], args[1], args[2]))
+        print args
 
 
     @liblo.make_method('/pyta/add_file', 's')
