@@ -290,7 +290,7 @@ class PytaVSL(object):
             print("OSC ARGS ERROR: Slide number out of range")
 
     @liblo.make_method('/pyta/slide/animate', 'i')
-    def slide_animate(self, args):
+    def slide_animate(self, path, args):
         self.ctnr.slides[args[0]].animate()
 
 
