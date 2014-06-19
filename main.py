@@ -212,7 +212,7 @@ class PytaVSL(object):
         self.shader = pi3d.Shader("uv_light")
         self.matsh = pi3d.Shader("mat_light")
         self.CAMERA = pi3d.Camera(is_3d=False)
-        self.light = pi3d.Light(lightpos=(1, 1, -3), lightamb=(1, 0, 0))
+        self.light = pi3d.Light(lightpos=(1, 1, -3), lightcol=(0, 1, 1), lightamb=(1, 0, 0))
 
         # Loading files in the queue
         self.iFiles = glob.glob("pix/*.*")
