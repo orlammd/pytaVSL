@@ -46,7 +46,7 @@ class Slide(pi3d.Sprite):
         def threaded(self):
             for i in range(1000):
                 self.set_translation(1, 0, 0)
-                sleep(0.02)
+                time.sleep(0.02)
         t = threading.Thread(target=threaded)
         t.start()
 
@@ -291,7 +291,7 @@ class PytaVSL(object):
 
     @liblo.make_method('/pyta/slide/animate', 'i')
     def slide_animate(self):
-        self.ctnr.slide[args[0]].animate()
+        self.ctnr.slides[args[0]].animate()
 
 
     @liblo.make_method('/pyta/slide/load_file', 'iss')
