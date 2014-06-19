@@ -23,6 +23,10 @@ LOGGER.info("Log using this expression.")
 
 
 class Slide(pi3d.Sprite):
+'''
+The slide are sprites to be textured. They might be transformed using OSC messages, and the textures they do draw too.
+There might be several of them in one container.
+'''
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
@@ -43,7 +47,15 @@ class Slide(pi3d.Sprite):
         self.mask_on = False
 
     def animate(self, start, end, duration, step, function):
-
+        '''
+        animate aims to animate any transformation, in order to prevent pytaVSL to have too many incoming OSC message to manage.
+        It is threaded so that you might animate several slides at a time, or one slide with several transformations.
+        args:
+        - start and end are the initial and final values the transformation should reach,
+        - duration is the duration of the animation,
+        - step is the time-step of the animation (it determines the number of step),
+        - function is the function to be animated: position_[xyz], rotate_[xyz], scale_[xyz]
+        '''
         def threaded():
             nb_step = int(round(duration/step))
             a = float(end-start)/nb_step
@@ -100,14 +112,23 @@ class Slide(pi3d.Sprite):
 
 
     def set_position(self, x, y, z):
+        '''
+        set_position aims to set the position of the slides and to keep a trace of it
+        '''
         self.position(x, y, z)
         self.mask.position(x, y, z+0.1)
 
     def set_translation(self, dx, dy, dz):
+        '''
+        set_translation does a translation operation on the slide
+        '''
         self.translate(dx, dy, dz)
         self.mask.translate(dx, dy, dz)
 
     def set_scale(self, sx, sy, sz):
+        '''
+        set_scale sets the scale of the slides and keeps track of it
+        '''
         self.sx = sx
         self.sy = sy
         self.sz = sz
@@ -117,6 +138,9 @@ class Slide(pi3d.Sprite):
 
     def set_angle(self, ax, ay, az):
         # set angle (absolute)
+        ''' 
+        set_angle sets the rotation of the slide and keeps track of it. It's an absolute angle, not a rotation one.
+        '''
         self.ax = ax
         self.ay = ay
         self.az = az
@@ -130,6 +154,11 @@ class Slide(pi3d.Sprite):
 
 
 class Container:
+'''
+Container might contains several slides which inherits from its position, angle, scale...
+# TODO : container might be moved
+# TODO : several containers in one pytaVSL instance
+'''
     def __init__(self, parent, nSli):
         self.parent = parent
         self.nSli = nSli # number of slides per container
@@ -171,6 +200,9 @@ class Container:
             
 
 class PytaVSL(object):
+'''
+PytaVSL contains the screen, the camera, the light, and the slides containers. It's also an OSC server which contains the method to control all of its children.
+'''
     def __init__(self, port=56418):
         # setup OSC
         self.port = port
