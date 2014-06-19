@@ -448,7 +448,7 @@ class PytaVSL(object):
     @liblo.make_method('/pyta/rgb', 'fff')
     def slide_enlighten(self, path, args):
         self.light.ambient((args[0], args[1], args[2]))
-        print args
+        print(args)
 
 
     @liblo.make_method('/pyta/add_file', 's')
