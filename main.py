@@ -209,9 +209,10 @@ PytaVSL contains the screen, the camera, the light, and the slides containers. I
 
         # setup OpenGL
         self.DISPLAY = pi3d.Display.create(background=(0.0, 0.0, 0.0, 1.0), frames_per_second=25)
-        self.shader = pi3d.Shader("uv_flat")
+        self.shader = pi3d.Shader("uv_light")
         self.matsh = pi3d.Shader("mat_light")
         self.CAMERA = pi3d.Camera(is_3d=False)
+        self.light = pi3d.Light(lightpos=(1, 1, -3), lightamb=(1, 0, 0))
 
         # Loading files in the queue
         self.iFiles = glob.glob("pix/*.*")
