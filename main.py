@@ -43,11 +43,11 @@ class Slide(pi3d.Sprite):
         self.mask_on = False
 
     def animate(self):
-        def threaded(self):
+        def threaded(slide):
             for i in range(1000):
-                self.set_translation(1, 0, 0)
+                slide.set_translation(1, 0, 0)
                 time.sleep(0.02)
-        t = threading.Thread(target=threaded, args=(self))
+        t = threading.Thread(target=threaded, args=([self]))
         t.start()
 
 
