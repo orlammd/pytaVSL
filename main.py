@@ -376,6 +376,14 @@ class PytaVSL(object):
     def slide_animate(self, path, args):
         self.ctnr.slides[args[0]].animate(*args[1:])
 
+    @liblo.make_method('/pyta/slide/rgb', 'ifff')
+    def slide_enlighten(self, path, args):
+        '''
+        Colorize the slide with rgb color.
+        '''
+        self.light.ambient((args[1], args[2], args[3]))
+        self.ctnr.slides[args[0]].set_light(self.light,0)
+
 
     @liblo.make_method('/pyta/slide/load_file', 'iss')
     @liblo.make_method('/pyta/slide/load_file', 'is')
@@ -397,6 +405,8 @@ class PytaVSL(object):
             print(args[1] + ": no such file in the current list - please consider adding it with /pyta/add_file ,s [path to the file]")
             print("Current list of files:")
             print(self.iFiles)
+
+
 
     @liblo.make_method('/pyta/slide/slide_info', 'ii')
     def slide_info_cb(self, path, args, types, src):
@@ -444,10 +454,7 @@ class PytaVSL(object):
         slide.set_angle(float(ag[0]), float(ag[1]), float(ag[2]))
         slide.set_alpha(al)
 
-    @liblo.make_method('/pyta/rgb', 'ifff')
-    def slide_enlighten(self, path, args):
-        self.light.ambient((args[1], args[2], args[3]))
-        self.ctnr.slides[args[0]].set_light(self.light,0)
+
 
 
     @liblo.make_method('/pyta/add_file', 's')
