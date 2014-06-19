@@ -54,7 +54,7 @@ class Slide(pi3d.Sprite):
         - start and end are the initial and final values the transformation should reach,
         - duration is the duration of the animation,
         - step is the time-step of the animation (it determines the number of step),
-        - function is the function to be animated: position_[xyz], rotate_[xyz], scale_[xyz]
+        - function is the function to be animated: position_[xyz], rotate_[xyz], scale_[xyz], alpha
         '''
         def threaded():
             nb_step = int(round(duration/step))
@@ -105,6 +105,11 @@ class Slide(pi3d.Sprite):
                 for i in range(nb_step+1):
                     val = a*i+start
                     self.set_scale(self.sx, self.sy, val)
+                    time.sleep(step)
+            elif function == 'alpha':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_alpha(val)
                     time.sleep(step)
 
         t = threading.Thread(target=threaded)
