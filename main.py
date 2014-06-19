@@ -47,7 +47,7 @@ class Slide(pi3d.Sprite):
             for i in range(1000):
                 self.set_translation(1, 0, 0)
                 time.sleep(0.02)
-        t = threading.Thread(target=threaded)
+        t = threading.Thread(target=self.threaded)
         t.start()
 
 
