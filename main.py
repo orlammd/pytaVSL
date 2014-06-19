@@ -48,10 +48,51 @@ class Slide(pi3d.Sprite):
             nb_step = int(round(duration/step))
             a = float(end-start)/nb_step
 
-            if function == 'position_x': #PositionX
+            # Needs of some factorization there
+            if function == 'position_x':
                 for i in range(nb_step+1):
                     val = a*i+start
                     self.set_position(val, self.y(), self.z())
+                    time.sleep(step)
+            elif function == 'position_y':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_position(self.x(), val, self.z())
+                    time.sleep(step)
+            elif function == 'position_z':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_position(self.x(), self.y(), val)
+                    time.sleep(step)
+            elif function == 'rotate_x':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_rotate(val, self.ay, self.az)
+                    time.sleep(step)
+            elif function == 'rotate_y':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_rotate(self.ax, val, self.az)
+                    time.sleep(step)
+            elif function == 'rotate_z':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_angle(self.ax, self.ay, val)
+                    time.sleep(step)
+            elif function == 'scale_x':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_scale(val, self.sy, self.sz)
+                    time.sleep(step)
+            elif function == 'scale_y':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_scale(self.sx, val, self.sz)
+                    time.sleep(step)
+            elif function == 'scale_z':
+                for i in range(nb_step+1):
+                    val = a*i+start
+                    self.set_scale(self.sx, self.sy, val)
                     time.sleep(step)
 
         t = threading.Thread(target=threaded)
