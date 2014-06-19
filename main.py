@@ -444,10 +444,10 @@ class PytaVSL(object):
         slide.set_angle(float(ag[0]), float(ag[1]), float(ag[2]))
         slide.set_alpha(al)
 
-    @liblo.make_method('/pyta/rgb', 'fff')
+    @liblo.make_method('/pyta/rgb', 'ifff')
     def slide_enlighten(self, path, args):
-        self.light.ambient((args[0], args[1], args[2]))
-        self.ctnr.slides[0].set_light(self.light,0)
+        self.light.ambient((args[1], args[2], args[3]))
+        self.ctnr.slides[args[0]].set_light(self.light,0)
 
 
     @liblo.make_method('/pyta/add_file', 's')
