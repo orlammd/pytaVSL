@@ -231,7 +231,7 @@ class PytaVSL(object):
             self.server = liblo.ServerThread(self.port)
             self.server.register_methods(self)
             self.server.start()
-            print("Listening on OSC port: " + str(self.port))
+            LOGGER.info("Listening on OSC port: " + str(self.port))
 
     def on_exit(self):
         if self.port is not None:
@@ -267,14 +267,13 @@ class PytaVSL(object):
     # OSC Methods
     @liblo.make_method('/pyta/slide/visible', 'ii')
     def slide_visible_cb(self, path, args):
-        print(args[0])
         if args[0] < self.ctnr.nSli:
             if args[1]:
                 self.ctnr.slides[args[0]].visible = True
             else:
                 self.ctnr.slides[args[0]].visible = False     
         else:
-            print("OSC ARGS ERROR: Slide number out of range")        
+            LOGGER.error("OSC ARGS ERROR: Slide number out of range")        
 
     @liblo.make_method('/pyta/slide/mask_on', 'ii')
     def slide_mask_on_cb(self, path, args):
@@ -290,14 +289,14 @@ class PytaVSL(object):
             else:
                 self.ctnr.slides[args[0]].mask_on = False     
         else:
-            print("OSC ARGS ERROR: Slide number out of range")        
+            LOGGER.error("OSC ARGS ERROR: Slide number out of range")        
 
     @liblo.make_method('/pyta/slide/alpha', 'if')
     def slide_alpha_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             self.ctnr.slides[args[0]].set_alpha(args[1])
         else:
-            print("OSC ARGS ERROR: Slide number out of range")
+            LOGGER.error("OSC ARGS ERROR: Slide number out of range")
 
     @liblo.make_method('/pyta/slide/position', 'ifff')
     @liblo.make_method('/pyta/slide/position_x', 'if')
@@ -314,7 +313,7 @@ class PytaVSL(object):
             elif path == "/pyta/slide/position_z":
                 self.ctnr.slides[args[0]].set_position(self.ctnr.slides[args[0]].x(), self.ctnr.slides[args[0]].y(), args[1])
         else:
-            print("OSC ARGS ERROR: Slide number out of range")
+            LOGGER.error("OSC ARGS ERROR: Slide number out of range")
 
     @liblo.make_method('/pyta/slide/translate', 'ifff')
     @liblo.make_method('/pyta/slide/translate_x', 'if')
@@ -331,7 +330,7 @@ class PytaVSL(object):
             elif path == "/pyta/slide/translate_z":
                 self.ctnr.slides[args[0]].set_translation(0.0, 0.0, args[1])   
         else:
-            print("OSC ARGS ERROR: Slide number out of range")
+            LOGGER.error("OSC ARGS ERROR: Slide number out of range")
 
     @liblo.make_method('/pyta/slide/scale', 'ifff')
     @liblo.make_method('/pyta/slide/scale_x', 'if')
@@ -353,7 +352,7 @@ class PytaVSL(object):
                 self.ctnr.slides[args[0]].set_scale(self.ctnr.slides[args[0]].sx*args[1], self.ctnr.slides[args[0]].sy*args[1], self.ctnr.slides[args[0]].sz)
 
         else:
-            print("OSC ARGS ERROR: Slide number out of range")
+            LOGGER.error("OSC ARGS ERROR: Slide number out of range")
 
     @liblo.make_method('/pyta/slide/rotate', 'ifff')
     @liblo.make_method('/pyta/slide/rotate_x', 'if')
@@ -370,7 +369,7 @@ class PytaVSL(object):
             elif path == "/pyta/slide/rotate_z":
                 self.ctnr.slides[args[0]].set_angle(self.ctnr.slides[args[0]].ax, self.ctnr.slides[args[0]].ay, args[1])
         else:
-            print("OSC ARGS ERROR: Slide number out of range")
+            LOGGER.error("OSC ARGS ERROR: Slide number out of range")
 
     @liblo.make_method('/pyta/slide/animate', 'iiiffs') # slide, start, end, duration, step, function
     def slide_animate(self, path, args):
@@ -393,18 +392,18 @@ class PytaVSL(object):
         else:
             self.ctnr.slides[args[0]].creation = True
         if self.ctnr.slides[args[0]].visible:
-            print("WARNING: you're loading a file in a potentially visible slide - loading takes a bit of time, the effect might not render immediately")
+            LOGGER.info("WARNING: you're loading a file in a potentially visible slide - loading takes a bit of time, the effect might not render immediately")
         fexist = False
         for i in range(self.nFi):
             if args[1] == str(self.iFiles[i]):
                 self.ctnr.items[args[0]] = [self.iFiles[i%self.nFi], self.ctnr.slides[args[0]]]
                 self.fileQ.put(self.ctnr.items[args[0]])
-                print("loading file " + args[1] + " in slide " + str(args[0]))
+                LOGGER.info("loading file " + args[1] + " in slide " + str(args[0]))
                 fexist = True
         if fexist == False:
-            print(args[1] + ": no such file in the current list - please consider adding it with /pyta/add_file ,s [path to the file]")
-            print("Current list of files:")
-            print(self.iFiles)
+            LOGGER.info(args[1] + ": no such file in the current list - please consider adding it with /pyta/add_file ,s [path to the file]")
+            LOGGER.info("Current list of files:")
+            LOGGER.info(self.iFiles)
 
 
 
@@ -425,7 +424,7 @@ class PytaVSL(object):
 	slide = self.ctnr.slides[args[0]]
 	prefix = '/pyta/slide/'
         filename = 's' + str(args[0]) + '.' + args[1] + '.state'
-	print('Write in progress in ' + filename)
+	LOGGER.info('Write in progress in ' + filename)
  
         statef = open(filename, 'w')
         statef.write("slide " + str(args[0]) + "\n") 
@@ -462,11 +461,11 @@ class PytaVSL(object):
         if os.path.exists(args[0]):
             self.iFiles.extend(glob.glob(args[0]))
             self.nFi = len(self.iFiles)
-            print("file " + args[0] + " added to the list:")
+            LOGGER.info("file " + args[0] + " added to the list:")
             for i in range(self.nFi):
-                print("  + " + self.iFiles[i])
+                LOGGER.info("  + " + self.iFiles[i])
         else:
-            print("ERREUR: " + args[0] + ": no such file or directory")
+            LOGGER.error("ERROR: " + args[0] + ": no such file or directory")
 
 
 
