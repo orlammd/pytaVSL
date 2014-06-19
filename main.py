@@ -23,10 +23,10 @@ LOGGER.info("Log using this expression.")
 
 
 class Slide(pi3d.Sprite):
-'''
-The slide are sprites to be textured. They might be transformed using OSC messages, and the textures they do draw too.
-There might be several of them in one container.
-'''
+    '''
+    The slide are sprites to be textured. They might be transformed using OSC messages, and the textures they do draw too.
+    There might be several of them in one container.
+    '''
     def __init__(self):
         super(Slide, self).__init__(w=1.0, h=1.0)
         self.visible = False
@@ -154,11 +154,11 @@ There might be several of them in one container.
 
 
 class Container:
-'''
-Container might contains several slides which inherits from its position, angle, scale...
-# TODO : container might be moved
-# TODO : several containers in one pytaVSL instance
-'''
+    '''
+    Container might contains several slides which inherits from its position, angle, scale...
+    # TODO : container might be moved
+    # TODO : several containers in one pytaVSL instance
+    '''
     def __init__(self, parent, nSli):
         self.parent = parent
         self.nSli = nSli # number of slides per container
@@ -200,9 +200,9 @@ Container might contains several slides which inherits from its position, angle,
             
 
 class PytaVSL(object):
-'''
-PytaVSL contains the screen, the camera, the light, and the slides containers. It's also an OSC server which contains the method to control all of its children.
-'''
+    '''
+    PytaVSL contains the screen, the camera, the light, and the slides containers. It's also an OSC server which contains the method to control all of its children.
+    '''
     def __init__(self, port=56418):
         # setup OSC
         self.port = port
