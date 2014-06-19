@@ -48,7 +48,7 @@ class Slide(pi3d.Sprite):
             nb_step = int(round(duration/step))
             a = float(end-start)/nb_step
 
-            if function == 'position_x':
+            if function == 'position_x': #PositionX
                 for i in range(nb_step+1):
                     val = a*i+start
                     self.set_position(val, self.y(), self.z())
