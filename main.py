@@ -15,6 +15,8 @@ import liblo
 import random
 import os.path
 import os
+import sys
+import getopt
 
 from six.moves import queue
 
@@ -472,7 +474,11 @@ class PytaVSL(object):
 
 ########## MAIN APP ##########
 
-pyta = PytaVSL()
+for arg in sys.argv:
+    if arg != 'main.py':
+        p = arg
+
+pyta = PytaVSL(port=p)
 pyta.on_start()
 
 t = threading.Thread(target=pyta.tex_load)
