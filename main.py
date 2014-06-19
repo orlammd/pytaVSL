@@ -42,6 +42,14 @@ class Slide(pi3d.Sprite):
         self.mask = pi3d.Sprite()
         self.mask_on = False
 
+    def animate(self):
+        def threaded(self):
+            for i in range(1000):
+                self.set_translation(1, 0, 0)
+                sleep(0.02)
+        t = threading.Thread(target=threaded)
+        t.start()
+
 
     def set_position(self, x, y, z):
         self.position(x, y, z)
@@ -280,6 +288,11 @@ class PytaVSL(object):
                 self.ctnr.slides[args[0]].set_angle(self.ctnr.slides[args[0]].ax, self.ctnr.slides[args[0]].ay, args[1])
         else:
             print("OSC ARGS ERROR: Slide number out of range")
+
+    @liblo.make_method('/pyta/slide/animate', 'i')
+    def slide_animate(self):
+        self.ctnr.slide[args[0]].animate()
+
 
     @liblo.make_method('/pyta/slide/load_file', 'iss')
     @liblo.make_method('/pyta/slide/load_file', 'is')
