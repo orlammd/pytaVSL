@@ -224,7 +224,7 @@ class PytaVSL(object):
         self.fileQ = queue.Queue()
 
         # Containers
-        self.ctnr = Container(parent=self, nSli=16)
+        self.ctnr = Container(parent=self, nSli=100)
 
 
 
