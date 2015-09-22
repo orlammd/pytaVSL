@@ -271,13 +271,13 @@ class PytaVSL(object):
     def slide_visible_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if args[1]:
-		if self.args[0] == -1:
-		    for i in (1,len(self.ctnr.slides)):
+	        self.ctnr.slides[args[0]].visible = True
+            else:
+		if args[0] < 0:
+		    for i in range(1, self.ctnr.nSli):
 			self.ctnr.slides[i].visible = False
 		else:
-	            self.ctnr.slides[args[0]].visible = True
-            else:
-                self.ctnr.slides[args[0]].visible = False     
+		    self.ctnr.slides[args[0]].visible = False     
         else:
             LOGGER.error("OSC ARGS ERROR: Slide number out of range")        
 
