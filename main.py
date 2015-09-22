@@ -271,7 +271,11 @@ class PytaVSL(object):
     def slide_visible_cb(self, path, args):
         if args[0] < self.ctnr.nSli:
             if args[1]:
-                self.ctnr.slides[args[0]].visible = True
+		if self.args[0] == -1:
+		    for i in (1,len(self.ctnr.slides)):
+			self.ctnr.slides[i].visible = False
+		else:
+	            self.ctnr.slides[args[0]].visible = True
             else:
                 self.ctnr.slides[args[0]].visible = False     
         else:
